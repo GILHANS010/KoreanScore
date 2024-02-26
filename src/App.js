@@ -17,7 +17,10 @@ const koreanToChinese = {
     '이': '夷',
     '남': '南',
     '무': '無',
-    '응': '應'
+    '응': '應',
+    'ㅅ': '△',
+    '<': '〈',
+    '-': '─',
 };
 
 const octaveMapping = {
@@ -114,7 +117,6 @@ const JeongganboEditor = () => {
             gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)`,
             width: `${gridDimensions.columns * 100}px`, // Adjusted for simplicity
         };
-
 
     return (
         <div>

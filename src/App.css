@@ -43,9 +43,9 @@ button:hover {
 /* Add this to your existing CSS */
 .row-separator {
   grid-column: 1 / -1; /* Span across all columns */
-  height: 0px;
-  border : 1px solid #000;
-  background-color: black;
+  height: 2px;
+  border : 1.5px solid #000;
+  /* background-color: black; */
   width: 100%;
 }
 
