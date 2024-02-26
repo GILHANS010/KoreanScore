@@ -75,6 +75,7 @@ input[type="number"], select, button {
   text-align: center; /* Center text horizontally for consistency */
   font-size: 20px;
   background-color: #fff;
+  direction: ltr;
 }
 
 
