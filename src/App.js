@@ -62,12 +62,12 @@ const JeongganboEditor = () => {
             }, () => new Array(columns).fill('')));
         };
 
-const handleCellEdit = (row, column, note) => {
-    let newNotesData = [...notesData];
-    const convertedNote = convertNotes(note); // Convert the note to symbols
-    newNotesData[row][column] = convertedNote; // Store symbols directly
-    setNotesData(newNotesData);
-};
+        const handleCellEdit = (row, column, note) => {
+            let newNotesData = [...notesData];
+            const convertedNote = convertNotes(note); // Convert the note to symbols
+            newNotesData[row][column] = convertedNote; // Store symbols directly
+            setNotesData(newNotesData);
+        };
 
         const convertNotes = (notes) => {
             // Splitting on each character that is not a modifier, keeping the modifiers with the character
@@ -93,32 +93,36 @@ const handleCellEdit = (row, column, note) => {
                 case ';;':
                     return 4;
                 case '/':
-                    return 1; 
+                    return 1;
                 case '//':
                     return 0;
                 default:
-                    return 2; 
+                    return 2;
             }
+        };
+
+        const transposeArray = (array) => {
+            return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
         };
 
     return (
         <div>
+            <div id="editor-container" style={{ gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)` }}>
+                {notesData.map((row, rowIndex) =>
+                    row.map((cell, columnIndex) => (
+                        // Convert cell note symbols to HTML here before rendering
+                        <div key={`${rowIndex}-${columnIndex}`} 
+                            className="jeonggan" 
+                            contentEditable 
+                            onBlur={(e) => handleCellEdit(rowIndex, columnIndex, e.target.innerText)} 
+                            dangerouslySetInnerHTML={{ __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('') }} />
+                    ))
+                )}
+            </div>
             <input id="columnsInput" type="number" defaultValue={8} min="1" onChange={(e) => updateGridDimensions(parseInt(e.target.value, 10), gridDimensions.rows)} ref={columnsInputRef} />
             <input id="rowsInput" type="number" defaultValue={12} min="1" onChange={(e) => updateGridDimensions(gridDimensions.columns, parseInt(e.target.value, 10))} />
             <button onClick={() => updateGridDimensions(8, 12)}>Reset Grid</button>
-                <div id="editor-container" style={{ gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)` }}>
-                    {notesData.map((row, rowIndex) =>
-                        row.map((cell, columnIndex) => (
-                            // Convert cell note symbols to HTML here before rendering
-                            <div key={`${rowIndex}-${columnIndex}`} 
-                                className="jeonggan" 
-                                contentEditable 
-                                onBlur={(e) => handleCellEdit(rowIndex, columnIndex, e.target.innerText)} 
-                                dangerouslySetInnerHTML={{ __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('') }} />
-                        ))
-                    )}
-                </div>
-            <button onClick={() => console.log(JSON.stringify(notesData))}>Save Jeongganbo</button>
+            <button onClick={() => console.log(JSON.stringify(transposeArray(notesData)))}>Save Jeongganbo</button>
         </div>
     );
 };

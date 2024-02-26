@@ -6,7 +6,7 @@
   border: 1px solid #000; /* Outline the editor container */
   margin: 20px auto; /* Center the container on the page and add some margin */
   max-width: 80%; /* Limit the maximum width to ensure it doesn't stretch too far on larger screens */
-  gap: 5px; /* Add some space between cells */
+  /* gap: 5px; */
 }
 
 .jeonggan {
