@@ -1,18 +1,16 @@
-/* Updated styles for the Jeongganbo editor grid */
 #editor-container {
   display: grid;
-  justify-content: center; /* Center grid in the container */
-  direction: rtl; /* Ensure the grid starts from the upper right */
-  border: 1px solid #000; /* Outline the editor container */
-  margin: 20px auto; /* Center the container on the page and add some margin */
-  max-width: 80%; /* Limit the maximum width to ensure it doesn't stretch too far on larger screens */
-  /* gap: 5px; */
+  justify-content: start; /* Aligns content to the start which is now the right due to RTL */
+  direction: rtl; /* Keeps the direction right-to-left */
+  border: 2px solid #000;
+  margin: 20px auto;
 }
 
 .jeonggan {
-  border: 1px solid #000; /* Border for individual cells */
-  width: 50px; /* Fixed width for cells */
-  height: 75px; /* Fixed height for cells */
+  position: relative;
+  border: 1px solid #000; /* Existing style */
+  width: 80px; /* Fixed width for cells */
+  height: 80px; /* Fixed height for cells */
   display: flex; /* Use flexbox for centering content */
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
@@ -48,4 +46,13 @@ button:hover {
   justify-content: center; /* Center content vertically */
   align-items: center; /* Center content horizontally */
   height: 100%; /* Fill the cell */
+}
+
+/* Add this to your existing CSS */
+.row-separator {
+  grid-column: 1 / -1; /* Span across all columns */
+  height: 1px; /* Height of the separator line */
+  border : 1px solid #000;
+  background-color: black;
+  width: 100%;
 }

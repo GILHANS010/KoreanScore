@@ -42,15 +42,19 @@ const JeongganboEditor = () => {
         };
         const [gridDimensions, setGridDimensions] = useState(defaultGridDimensions);
         const [notesData, setNotesData] = useState(Array.from({
-                length: gridDimensions.rows
-            }, () =>
-            new Array(gridDimensions.columns).fill('')));
+            length: gridDimensions.rows
+        }, () => new Array(gridDimensions.columns).fill('')));
+        const [beatsPerBar, setBeatsPerBar] = useState(4); // Now allows dynamic updates
+
 
         const columnsInputRef = useRef(null);
 
         useEffect(() => {
-            columnsInputRef.current.focus();
+            if (columnsInputRef.current) {
+                columnsInputRef.current.focus();
+            }
         }, []);
+
 
         const updateGridDimensions = (columns, rows) => {
             setGridDimensions({
@@ -105,22 +109,58 @@ const JeongganboEditor = () => {
             return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
         };
 
+        // Dynamically calculate the editor container width based on the number of columns
+        const editorContainerStyle = {
+            gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)`,
+            width: `${gridDimensions.columns * 100}px`, // Adjusted for simplicity
+        };
+
+
+        // Function to render bars ('강')
+        const renderBars = (cell, columnIndex) => {
+            // Check if the current column is the end of a '강'
+            const isBarEnd = (columnIndex + 1) % beatsPerBar === 0 && columnIndex !== gridDimensions.columns - 1;
+            return ( <
+                div key = {
+                    columnIndex
+                }
+                className = {
+                    `jeonggan ${isBarEnd ? 'bar-end' : ''}`
+                }
+                dangerouslySetInnerHTML = {
+                    {
+                        __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('')
+                    }
+                }
+                />
+            );
+        };
+
     return (
         <div>
-            <div id="editor-container" style={{ gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)` }}>
-                {notesData.map((row, rowIndex) =>
-                    row.map((cell, columnIndex) => (
-                        // Convert cell note symbols to HTML here before rendering
-                        <div key={`${rowIndex}-${columnIndex}`} 
-                            className="jeonggan" 
-                            contentEditable 
-                            onBlur={(e) => handleCellEdit(rowIndex, columnIndex, e.target.innerText)} 
-                            dangerouslySetInnerHTML={{ __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('') }} />
-                    ))
-                )}
+            <div id="editor-container" style={editorContainerStyle}>
+                {notesData.map((row, rowIndex) => (
+                    // Fragment to wrap each row and its potential separator
+                    <React.Fragment key={rowIndex}>
+                        {row.map((cell, columnIndex) => (
+                            <div
+                                key={`${rowIndex}-${columnIndex}`}
+                                className="jeonggan"
+                                contentEditable
+                                onBlur={(e) => handleCellEdit(rowIndex, columnIndex, e.target.innerText)}
+                                dangerouslySetInnerHTML={{ __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('') }}>
+                            </div>
+                        ))}
+                        {/* After every beatsPerBar rows, add a separator, but avoid it after the last row */}
+                        {(rowIndex + 1) % beatsPerBar === 0 && rowIndex !== notesData.length - 1 && (
+                            <div className="row-separator"></div>
+                        )}
+                    </React.Fragment>
+                ))}
             </div>
             <input id="columnsInput" type="number" defaultValue={8} min="1" onChange={(e) => updateGridDimensions(parseInt(e.target.value, 10), gridDimensions.rows)} ref={columnsInputRef} />
             <input id="rowsInput" type="number" defaultValue={12} min="1" onChange={(e) => updateGridDimensions(gridDimensions.columns, parseInt(e.target.value, 10))} />
+            <input id="barInput" type="number" defaultValue={beatsPerBar} onChange={(e) => setBeatsPerBar(parseInt(e.target.value, 10))} placeholder="Beats per Bar"/>
             <button onClick={() => updateGridDimensions(8, 12)}>Reset Grid</button>
             <button onClick={() => console.log(JSON.stringify(transposeArray(notesData)))}>Save Jeongganbo</button>
         </div>
