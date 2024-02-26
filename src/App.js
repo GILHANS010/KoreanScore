@@ -4,6 +4,7 @@ import React, {
     useEffect
 } from 'react';
 import './App.css';
+import html2canvas from 'html2canvas';
 
 const koreanToChinese = {
     '황': '黃',
@@ -39,16 +40,12 @@ const octaveMapping = {
 };
 
 const JeongganboEditor = () => {
-        const defaultGridDimensions = {
-            columns: 8,
-            rows: 12
-        };
-        const [gridDimensions, setGridDimensions] = useState(defaultGridDimensions);
+        const [gridDimensions, setGridDimensions] = useState({ columns: 8, rows: 12 });
         const [notesData, setNotesData] = useState(Array.from({
             length: gridDimensions.rows
         }, () => new Array(gridDimensions.columns).fill('')));
         const [beatsPerBar, setBeatsPerBar] = useState(4); // Now allows dynamic updates
-
+        const [songTitle, setSongTitle] = useState("Song Title Here"); // State for the editable title
 
         const columnsInputRef = useRef(null);
 
@@ -58,6 +55,9 @@ const JeongganboEditor = () => {
             }
         }, []);
 
+        const handleTitleChange = (e) => {
+            setSongTitle(e.target.innerText); // Update the title based on contentEditable div's text
+        };
 
         const updateGridDimensions = (columns, rows) => {
             setGridDimensions({
@@ -115,38 +115,80 @@ const JeongganboEditor = () => {
         // Dynamically calculate the editor container width based on the number of columns
         const editorContainerStyle = {
             gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)`,
-            width: `${gridDimensions.columns * 100}px`, // Adjusted for simplicity
+            width: `${gridDimensions.columns * 120}px`, // Adjusted for simplicity
+        };
+
+        const downloadAsImage = async () => {
+            const captureArea = document.getElementById('score-container');
+            const canvas = await html2canvas(captureArea);
+            const image = canvas.toDataURL('image/png');
+
+            // Create a link and set the URL as the link's href attribute
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = `${songTitle.replace(/\s+/g, '_')+'_madeWithK-Score'}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         };
 
     return (
-        <div>
-            <div id="editor-container" style={editorContainerStyle}>
-                {notesData.map((row, rowIndex) => (
-                    // Fragment to wrap each row and its potential separator
-                    <React.Fragment key={rowIndex}>
-                        {row.map((cell, columnIndex) => (
-                            <div
-                                key={`${rowIndex}-${columnIndex}`}
-                                className="jeonggan"
-                                contentEditable
-                                onBlur={(e) => handleCellEdit(rowIndex, columnIndex, e.target.innerText)}
-                                dangerouslySetInnerHTML={{ __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('') }}>
-                            </div>
-                        ))}
-                        {/* After every beatsPerBar rows, add a separator, but avoid it after the last row */}
-                        {(rowIndex + 1) % beatsPerBar === 0 && rowIndex !== notesData.length - 1 && (
-                            <div className="row-separator"></div>
-                        )}
-                    </React.Fragment>
-                ))}
+        <div className='main-container'>
+            <div className="menu-bar">
+                <div className="input-group">
+                    <label htmlFor="rowsInput">정:</label>
+                    <input id="rowsInput" type="number" defaultValue={12} min="1" onChange={(e) => updateGridDimensions(gridDimensions.columns, parseInt(e.target.value, 10))} />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="columnsInput">각:</label>
+                    <input id="columnsInput" type="number" defaultValue={8} min="1" onChange={(e) => updateGridDimensions(parseInt(e.target.value, 10), gridDimensions.rows)} ref={columnsInputRef} />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="barInput">강:</label>
+                    <input id="barInput" type="number" defaultValue={beatsPerBar} onChange={(e) => setBeatsPerBar(parseInt(e.target.value, 10))} />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="bpmInput">BPM:</label>
+                    <input id="bpmInput" type="number" defaultValue={60} />
+                </div>
+                <button onClick={() => updateGridDimensions(8, 12)}>Reset Grid</button>
+                <button onClick={() => console.log(JSON.stringify(transposeArray(notesData)))}>Save Jeongganbo</button>
+                <button onClick={downloadAsImage}>Download as PNG</button>
             </div>
-            <input id="columnsInput" type="number" defaultValue={8} min="1" onChange={(e) => updateGridDimensions(parseInt(e.target.value, 10), gridDimensions.rows)} ref={columnsInputRef} />
-            <input id="rowsInput" type="number" defaultValue={12} min="1" onChange={(e) => updateGridDimensions(gridDimensions.columns, parseInt(e.target.value, 10))} />
-            <input id="barInput" type="number" defaultValue={beatsPerBar} onChange={(e) => setBeatsPerBar(parseInt(e.target.value, 10))} placeholder="Beats per Bar"/>
-            <button onClick={() => updateGridDimensions(8, 12)}>Reset Grid</button>
-            <button onClick={() => console.log(JSON.stringify(transposeArray(notesData)))}>Save Jeongganbo</button>
+
+            <div id="score-container">
+
+                <div
+                    className="title"
+                    contentEditable
+                    onBlur={handleTitleChange}
+                    suppressContentEditableWarning={true} // To avoid console warning
+                >
+                    {songTitle}
+                </div>
+
+                <div id="editor-container" style={editorContainerStyle}>
+                    {notesData.map((row, rowIndex) => (
+                        <React.Fragment key={rowIndex}>
+                            {row.map((cell, columnIndex) => (
+                                <div
+                                    key={`${rowIndex}-${columnIndex}`}
+                                    className="jeonggan"
+                                    contentEditable
+                                    onBlur={(e) => handleCellEdit(rowIndex, columnIndex, e.target.innerText)}
+                                    dangerouslySetInnerHTML={{ __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('') }}>
+                                </div>
+                            ))}
+                            {(rowIndex + 1) % beatsPerBar === 0 && rowIndex !== notesData.length - 1 && (
+                                <div className="row-separator"></div>
+                            )}
+                        </React.Fragment>
+                    ))}
+                    </div>
+            </div>
         </div>
     );
+    
 };
 
 export default JeongganboEditor;
