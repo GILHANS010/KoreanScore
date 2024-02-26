@@ -35,112 +35,46 @@ const octaveMapping = {
     '응': ['㣹', '㒣', '應', '㶐', '㶝']
 };
 
+const convertToOctave = (note) => {
+    // Extracting modifiers and the character
+    const [modifiers, character] = note.split(/([;/]*)(.)/).slice(1, 3);
+    const baseNote = koreanToChinese[character] || character;
+    const octaveIndex = getOctaveIndex(modifiers);
+    const mappedCharacters = octaveMapping[character];
+    return mappedCharacters && mappedCharacters[octaveIndex] ? mappedCharacters[octaveIndex] : baseNote;
+};
+
+const getOctaveIndex = (modifiers) => {
+    const mapping = { '': 2, ';': 3, ';;': 4, '/': 1, '//': 0 };
+    return mapping[modifiers] || 2;
+};
+
 const JeongganboEditor = () => {
-        const defaultGridDimensions = {
-            columns: 8,
-            rows: 12
-        };
-        const [gridDimensions, setGridDimensions] = useState(defaultGridDimensions);
-        const [notesData, setNotesData] = useState(Array.from({
-            length: gridDimensions.rows
-        }, () => new Array(gridDimensions.columns).fill('')));
-        const [beatsPerBar, setBeatsPerBar] = useState(4); // Now allows dynamic updates
+    const initialDimensions = { columns: 8, rows: 12 };
+    const [dimensions, setDimensions] = useState(initialDimensions);
+    const [notesData, setNotesData] = useState(Array.from({ length: initialDimensions.rows }, () => new Array(initialDimensions.columns).fill('')));
+    const [beatsPerBar, setBeatsPerBar] = useState(4);
 
+    const columnsInputRef = useRef(null);
 
-        const columnsInputRef = useRef(null);
+    useEffect(() => {
+        columnsInputRef.current?.focus();
+    }, []);
 
-        useEffect(() => {
-            if (columnsInputRef.current) {
-                columnsInputRef.current.focus();
-            }
-        }, []);
+    const updateGridDimensions = (columns, rows) => {
+        setDimensions({ columns, rows });
+        setNotesData(Array.from({ length: rows }, () => new Array(columns).fill('')));
+    };
 
-
-        const updateGridDimensions = (columns, rows) => {
-            setGridDimensions({
-                columns,
-                rows
-            });
-            setNotesData(Array.from({
-                length: rows
-            }, () => new Array(columns).fill('')));
-        };
-
-        const handleCellEdit = (row, column, note) => {
-            let newNotesData = [...notesData];
-            const convertedNote = convertNotes(note); // Convert the note to symbols
-            newNotesData[row][column] = convertedNote; // Store symbols directly
-            setNotesData(newNotesData);
-        };
-
-        const convertNotes = (notes) => {
-            // Splitting on each character that is not a modifier, keeping the modifiers with the character
-            let splitNotes = notes.match(/([;/]*[\S])/g) || [];
-            return splitNotes.map(note => convertToOctave(note)).join('');
-        };
-
-        const convertToOctave = (note) => {
-            // Extracting modifiers and the character
-            let [modifiers, character] = note.split(/([;/]*)(.)/).slice(1, 3);
-            const baseNote = koreanToChinese[character] || character;
-            const octaveIndex = getOctaveIndex(modifiers);
-            const mappedCharacters = octaveMapping[character];
-            return mappedCharacters && mappedCharacters[octaveIndex] ? mappedCharacters[octaveIndex] : baseNote;
-        };
-
-        const getOctaveIndex = (modifiers) => {
-            switch (modifiers) {
-                case '':
-                    return 2;
-                case ';':
-                    return 3;
-                case ';;':
-                    return 4;
-                case '/':
-                    return 1;
-                case '//':
-                    return 0;
-                default:
-                    return 2;
-            }
-        };
-
-        const transposeArray = (array) => {
-            return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
-        };
-
-        // Dynamically calculate the editor container width based on the number of columns
-        const editorContainerStyle = {
-            gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)`,
-            width: `${gridDimensions.columns * 100}px`, // Adjusted for simplicity
-        };
-
-
-        // Function to render bars ('강')
-        const renderBars = (cell, columnIndex) => {
-            // Check if the current column is the end of a '강'
-            const isBarEnd = (columnIndex + 1) % beatsPerBar === 0 && columnIndex !== gridDimensions.columns - 1;
-            return ( <
-                div key = {
-                    columnIndex
-                }
-                className = {
-                    `jeonggan ${isBarEnd ? 'bar-end' : ''}`
-                }
-                dangerouslySetInnerHTML = {
-                    {
-                        __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('')
-                    }
-                }
-                />
-            );
-        };
+    const handleCellEdit = (row, column, note) => {
+        const newNotesData = notesData.map((rowData, rowIndex) => rowIndex === row ? rowData.map((cellData, columnIndex) => columnIndex === column ? convertToOctave(note) : cellData) : rowData);
+        setNotesData(newNotesData);
+    };
 
     return (
         <div>
-            <div id="editor-container" style={editorContainerStyle}>
+            <div id="editor-container" style={{ gridTemplateColumns: `repeat(${dimensions.columns}, 1fr)`, width: `${dimensions.columns * 100}px` }}>
                 {notesData.map((row, rowIndex) => (
-                    // Fragment to wrap each row and its potential separator
                     <React.Fragment key={rowIndex}>
                         {row.map((cell, columnIndex) => (
                             <div
@@ -151,18 +85,35 @@ const JeongganboEditor = () => {
                                 dangerouslySetInnerHTML={{ __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('') }}>
                             </div>
                         ))}
-                        {/* After every beatsPerBar rows, add a separator, but avoid it after the last row */}
-                        {(rowIndex + 1) % beatsPerBar === 0 && rowIndex !== notesData.length - 1 && (
-                            <div className="row-separator"></div>
-                        )}
+                        {(rowIndex + 1) % beatsPerBar === 0 && rowIndex !== notesData.length - 1 && <div className="row-separator"></div>}
                     </React.Fragment>
                 ))}
             </div>
-            <input id="columnsInput" type="number" defaultValue={8} min="1" onChange={(e) => updateGridDimensions(parseInt(e.target.value, 10), gridDimensions.rows)} ref={columnsInputRef} />
-            <input id="rowsInput" type="number" defaultValue={12} min="1" onChange={(e) => updateGridDimensions(gridDimensions.columns, parseInt(e.target.value, 10))} />
-            <input id="barInput" type="number" defaultValue={beatsPerBar} onChange={(e) => setBeatsPerBar(parseInt(e.target.value, 10))} placeholder="Beats per Bar"/>
-            <button onClick={() => updateGridDimensions(8, 12)}>Reset Grid</button>
-            <button onClick={() => console.log(JSON.stringify(transposeArray(notesData)))}>Save Jeongganbo</button>
+            <div className="controls">
+                <input
+                    id="columnsInput"
+                    type="number"
+                    defaultValue={initialDimensions.columns}
+                    min="1"
+                    onChange={(e) => updateGridDimensions(parseInt(e.target.value, 10), dimensions.rows)}
+                    ref={columnsInputRef}
+                />
+                <input
+                    id="rowsInput"
+                    type="number"
+                    defaultValue={initialDimensions.rows}
+                    min="1"
+                    onChange={(e) => updateGridDimensions(dimensions.columns, parseInt(e.target.value, 10))}
+                />
+                <input
+                    id="barInput"
+                    type="number"
+                    defaultValue={beatsPerBar}
+                    onChange={(e) => setBeatsPerBar(parseInt(e.target.value, 10))}
+                    placeholder="Beats per Bar"
+                />
+                <button onClick={() => updateGridDimensions(initialDimensions.columns, initialDimensions.rows)}>Reset Grid</button>
+            </div>
         </div>
     );
 };
