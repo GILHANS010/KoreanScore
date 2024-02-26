@@ -40,15 +40,6 @@ button:hover {
   background-color: #0056b3; /* Darken button on hover for feedback */
 }
 
-/* Optional: Style for note containers within each cell, if you decide to add structured content */
-.jeonggan-note-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Center content vertically */
-  align-items: center; /* Center content horizontally */
-  height: 100%; /* Fill the cell */
-}
-
 /* Add this to your existing CSS */
 .row-separator {
   grid-column: 1 / -1; /* Span across all columns */
