@@ -1,4 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {
+    useState,
+    useRef,
+    useEffect
+} from 'react';
 import './App.css';
 
 const koreanToChinese = {
@@ -32,66 +36,88 @@ const octaveMapping = {
 };
 
 const JeongganboEditor = () => {
-    const defaultGridDimensions = { columns: 8, rows: 12 };
-    const [gridDimensions, setGridDimensions] = useState(defaultGridDimensions);
-    const [notesData, setNotesData] = useState(Array.from({ length: gridDimensions.rows }, () =>
-        new Array(gridDimensions.columns).fill('')));
+        const defaultGridDimensions = {
+            columns: 8,
+            rows: 12
+        };
+        const [gridDimensions, setGridDimensions] = useState(defaultGridDimensions);
+        const [notesData, setNotesData] = useState(Array.from({
+                length: gridDimensions.rows
+            }, () =>
+            new Array(gridDimensions.columns).fill('')));
 
-    const columnsInputRef = useRef(null);
+        const columnsInputRef = useRef(null);
 
-    useEffect(() => {
-        columnsInputRef.current.focus();
-    }, []);
+        useEffect(() => {
+            columnsInputRef.current.focus();
+        }, []);
 
-    const updateGridDimensions = (columns, rows) => {
-        setGridDimensions({ columns, rows });
-        setNotesData(Array.from({ length: rows }, () => new Array(columns).fill('')));
-    };
+        const updateGridDimensions = (columns, rows) => {
+            setGridDimensions({
+                columns,
+                rows
+            });
+            setNotesData(Array.from({
+                length: rows
+            }, () => new Array(columns).fill('')));
+        };
 
-    const handleCellEdit = (row, column, note) => {
-        let newNotesData = [...notesData];
-        newNotesData[row][column] = convertNotes(note);
-        setNotesData(newNotesData);
-    };
+const handleCellEdit = (row, column, note) => {
+    let newNotesData = [...notesData];
+    const convertedNote = convertNotes(note); // Convert the note to symbols
+    newNotesData[row][column] = convertedNote; // Store symbols directly
+    setNotesData(newNotesData);
+};
 
-    const convertNotes = (notes) => {
-        // Splitting on each character that is not a modifier, keeping the modifiers with the character
-        let splitNotes = notes.match(/([;/]*[\S])/g) || [];
-        return splitNotes.map(note => convertToOctave(note)).join('');
-    };
+        const convertNotes = (notes) => {
+            // Splitting on each character that is not a modifier, keeping the modifiers with the character
+            let splitNotes = notes.match(/([;/]*[\S])/g) || [];
+            return splitNotes.map(note => convertToOctave(note)).join('');
+        };
 
-    const convertToOctave = (note) => {
-        // Extracting modifiers and the character
-        let [modifiers, character] = note.split(/([;/]*)(.)/).slice(1, 3);
-        const baseNote = koreanToChinese[character] || character;
-        const octaveIndex = getOctaveIndex(modifiers);
-        const mappedCharacters = octaveMapping[character];
-        return mappedCharacters && mappedCharacters[octaveIndex] ? mappedCharacters[octaveIndex] : baseNote;
-    };
+        const convertToOctave = (note) => {
+            // Extracting modifiers and the character
+            let [modifiers, character] = note.split(/([;/]*)(.)/).slice(1, 3);
+            const baseNote = koreanToChinese[character] || character;
+            const octaveIndex = getOctaveIndex(modifiers);
+            const mappedCharacters = octaveMapping[character];
+            return mappedCharacters && mappedCharacters[octaveIndex] ? mappedCharacters[octaveIndex] : baseNote;
+        };
 
-    const getOctaveIndex = (modifiers) => {
-        switch (modifiers) {
-            case '': return 2; // Default (no modifier)
-            case ';': return 3; // One octave higher
-            case ';;': return 4; // Two octaves higher
-            case '/': return 1; // One octave lower
-            case '//': return 0; // Two octaves lower
-            default: return 2; // Fallback to default if unrecognized
-        }
-    };
+        const getOctaveIndex = (modifiers) => {
+            switch (modifiers) {
+                case '':
+                    return 2;
+                case ';':
+                    return 3;
+                case ';;':
+                    return 4;
+                case '/':
+                    return 1; 
+                case '//':
+                    return 0;
+                default:
+                    return 2; 
+            }
+        };
 
     return (
         <div>
             <input id="columnsInput" type="number" defaultValue={8} min="1" onChange={(e) => updateGridDimensions(parseInt(e.target.value, 10), gridDimensions.rows)} ref={columnsInputRef} />
             <input id="rowsInput" type="number" defaultValue={12} min="1" onChange={(e) => updateGridDimensions(gridDimensions.columns, parseInt(e.target.value, 10))} />
             <button onClick={() => updateGridDimensions(8, 12)}>Reset Grid</button>
-            <div id="editor-container" style={{ gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)` }}>
-                {notesData.map((row, rowIndex) =>
-                    row.map((cell, columnIndex) => (
-                        <div key={`${rowIndex}-${columnIndex}`} className="jeonggan" contentEditable onBlur={(e) => handleCellEdit(rowIndex, columnIndex, e.target.innerText)} dangerouslySetInnerHTML={{ __html: cell }} />
-                    ))
-                )}
-            </div>
+                <div id="editor-container" style={{ gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)` }}>
+                    {notesData.map((row, rowIndex) =>
+                        row.map((cell, columnIndex) => (
+                            // Convert cell note symbols to HTML here before rendering
+                            <div key={`${rowIndex}-${columnIndex}`} 
+                                className="jeonggan" 
+                                contentEditable 
+                                onBlur={(e) => handleCellEdit(rowIndex, columnIndex, e.target.innerText)} 
+                                dangerouslySetInnerHTML={{ __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('') }} />
+                        ))
+                    )}
+                </div>
             <button onClick={() => console.log(JSON.stringify(notesData))}>Save Jeongganbo</button>
         </div>
     );

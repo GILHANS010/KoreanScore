@@ -18,6 +18,8 @@
   align-items: center; /* Center vertically */
   cursor: text; /* Change cursor to indicate editable */
   background-color: #f9f9f9; /* Light background color for better contrast */
+  flex-direction: column;
+  text-align: center; /* Center text horizontally for consistency */
 }
 
 /* Styles for inputs and buttons */
@@ -47,4 +49,3 @@ button:hover {
   align-items: center; /* Center content horizontally */
   height: 100%; /* Fill the cell */
 }
-
