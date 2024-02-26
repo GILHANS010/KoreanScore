@@ -41,6 +41,7 @@ const octaveMapping = {
 
 const JeongganboEditor = () => {
         const [gridDimensions, setGridDimensions] = useState({ columns: 8, rows: 12 });
+
         const [notesData, setNotesData] = useState(Array.from({
             length: gridDimensions.rows
         }, () => new Array(gridDimensions.columns).fill('')));
