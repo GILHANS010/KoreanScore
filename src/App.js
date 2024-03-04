@@ -190,8 +190,13 @@ const JeongganboEditor = () => {
         };
 
         const transposeArray = (array) => {
-            return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
+            // Assuming the input array is a 2D array of strings
+            return array[0].map((_, colIndex) => array.map(row => {
+                // Remove <br> tags from each cell's content before transposing
+                return row[colIndex].replace(/<br\s*\/?>/gi, '');
+            }));
         };
+        
 
         // Dynamically calculate the editor container width based on the number of columns
         const editorContainerStyle = {
