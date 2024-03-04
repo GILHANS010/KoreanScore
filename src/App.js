@@ -46,7 +46,7 @@ const JeongganboEditor = () => {
             length: gridDimensions.rows
         }, () => new Array(gridDimensions.columns).fill('')));
         const [beatsPerBar, setBeatsPerBar] = useState(4); // Now allows dynamic updates
-        const [songTitle, setSongTitle] = useState("Song Title Here"); // State for the editable title
+        const [songTitle, setSongTitle] = useState("제목"); // State for the editable title
 
         const columnsInputRef = useRef(null);
 
@@ -101,11 +101,62 @@ const JeongganboEditor = () => {
 
         const handleCellEdit = (row, column, note) => {
             let newNotesData = [...notesData];
-            const convertedNote = convertNotes(note); // Convert the note to symbols
-            newNotesData[row][column] = convertedNote; // Store symbols directly
-            setNotesData(newNotesData);
+            // Convert note to symbols
+            const convertedNote = convertNotes(note); // Assume this returns a string of symbols
+        
+            // Format the note with line breaks as needed
+            const formattedNote = formatNoteForDisplay(convertedNote);
+        
+            if (formattedNote !== false) {
+                newNotesData[row][column] = formattedNote; // Store formatted symbols
+                setNotesData(newNotesData);
+            } else {
+                // Optionally, alert the user that the input was refused
+                alert("Maximum of 6 characteristics allowed per cell.");
+            }
         };
-
+        
+        const formatNoteForDisplay = (note) => {
+            if (note.length > 6) return false; // Directly refuse input if more than 6 characters
+        
+            let formattedNote = note; // Default to the note itself
+        
+            switch (note.length) {
+                case 2:
+                case 3:
+                    // For 2 or 3 characters, insert line breaks between each character
+                    formattedNote = note.split('').join('<br>');
+                    break;
+                case 4:
+                    formattedNote = insertLineBreaks(note, [2]);
+                    break;
+                case 5:
+                    formattedNote = insertLineBreaks(note, [2, 3]);
+                    break;
+                case 6:
+                    formattedNote = insertLineBreaks(note, [2, 4]);
+                    break;
+                default:
+                    // Handle cases where note length is 0 or 1, or any other unexpected length <= 6
+                    // Since we've already checked for note.length > 6 above, this default case might not be necessary
+                    // but is included to satisfy ESLint's rule and provide a clear path for all possible inputs.
+                    break;
+            }
+        
+            return formattedNote;
+        };        
+        
+        const insertLineBreaks = (note, breakPoints) => {
+            let result = '';
+            let lastBreakPoint = 0;
+            breakPoints.forEach((point, index) => {
+                result += note.substring(lastBreakPoint, point) + (index < breakPoints.length ? '<br>' : '');
+                lastBreakPoint = point;
+            });
+            result += note.substring(lastBreakPoint); // Add the remaining part of the note
+            return result;
+        };
+        
         const convertNotes = (notes) => {
             // Splitting on each character that is not a modifier, keeping the modifiers with the character
             let splitNotes = notes.match(/([;/]*[\S])/g) || [];
@@ -210,7 +261,7 @@ const JeongganboEditor = () => {
                                     data-row={rowIndex}
                                     data-column={columnIndex}
                                     tabIndex={0} // Make the div focusable
-                                    dangerouslySetInnerHTML={{ __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('') }}>
+                                    dangerouslySetInnerHTML={{ __html: notesData[rowIndex][columnIndex] }}>
                                 </div>
                             ))}
                             {(rowIndex + 1) % beatsPerBar === 0 && rowIndex !== notesData.length - 1 && (
