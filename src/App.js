@@ -141,10 +141,10 @@ const JeongganboEditor = () => {
 
         const transposeArray = (array) => {
             // Assuming the input array is a 2D array of strings
-            return array[0].map((_, colIndex) => array.map(row => {
-                // Remove <br> tags from each cell's content before transposing
-                return row[colIndex].replace(/<br\s*\/?>/gi, '');
-            }));
+            return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
+            // return array[0].map((_, colIndex) => array.map(row => {
+            //     return row[colIndex].replace(/<br\s*\/?>/gi, '');
+            // }));
         };
         
         
