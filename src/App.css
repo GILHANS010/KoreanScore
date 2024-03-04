@@ -2,82 +2,80 @@ body {
   font-family: 'Arial', sans-serif;
   background-color: #f0f0f0;
   margin: 0;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .menu-bar {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  padding: 10px 0;
+  gap: 1.25rem;
+  padding: 0.625rem 0;
   background-color: #f8f9fa;
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 0.125rem solid #dee2e6;
+  width: 100%;
 }
 
-#score-container{
+#score-container {
   position: relative;
-  margin: 40px;
+  margin: 2.5rem;
 }
 
 .title {
   text-align: center;
-  font-size: 32px;
-  margin-bottom: 20px;
-  margin: 40px;
+  font-size: 2rem;
+  margin-bottom: 1.25rem;
+  margin: 2.5rem;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 0.3125rem;
   font-weight: bold;
-    margin-right: 10px; /* Spacing between label and input */
-
+  margin-right: 0.625rem; /* Spacing between label and input */
 }
 
 .input-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 input[type="number"], select, button {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 0.5rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
 }
 
 .main-container {
   background-color: #fff;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 #editor-container {
   display: grid;
-  margin-top: 20px; /* Adds some space between the menu bar and the editor container */
+  margin-top: 1.25rem; /* Adds some space between the menu bar and the editor container */
   justify-content: start; /* Aligns content to the start which is now the right due to RTL */
   direction: rtl; /* Keeps the direction right-to-left */
-  border: 1px solid #000;
-  margin: 20px auto;
-
+  border: 0.0625rem solid #000;
+  margin: 1.25rem auto;
 }
 
 .jeonggan {
   position: relative;
-  border: 1px solid #000;
-  width: 80px; /* Fixed width for cells */
-  height: 100px; /* Fixed height for cells */
+  border: 0.0625rem solid #000;
+  width: 5rem; /* Fixed width for cells */
+  height: 6.25rem; /* Fixed height for cells */
   display: flex; /* Use flexbox for centering content */
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   cursor: text; /* Change cursor to indicate editable */
   flex-direction: column;
   text-align: center; /* Center text horizontally for consistency */
-  font-size: 20px;
+  font-size: 1.25rem;
   background-color: #fff;
   direction: ltr;
 }
-
 
 button {
   background-color: #007bff;
@@ -89,11 +87,10 @@ button:hover {
   background-color: #0056b3;
 }
 
-/* Add this to your existing CSS */
 .row-separator {
   grid-column: 1 / -1; /* Span across all columns */
-  height: 2px;
-  border : 1.5px solid #000;
+  height: 0.125rem;
+  border: 0.09375rem solid #000;
   /* background-color: black; */
   width: 100%;
 }

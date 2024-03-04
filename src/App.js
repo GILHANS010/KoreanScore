@@ -70,6 +70,35 @@ const JeongganboEditor = () => {
             }, () => new Array(columns).fill('')));
         };
 
+        const handleCellFocus = (row, column, direction) => {
+            // Calculate next focusable cell based on current row and column
+            let nextRow = direction === 'down' ? row + 1 : row - 1;
+            let nextColumn = column;
+    
+            // If moving beyond the current column's rows, wrap to the next or previous column
+            if (nextRow >= gridDimensions.rows) {
+                nextRow = 0; // Wrap to the top of the next column
+                nextColumn = column + 1 >= gridDimensions.columns ? 0 : column + 1; // Move to the next column or wrap to the first column
+            } else if (nextRow < 0) {
+                nextRow = gridDimensions.rows - 1; // Wrap to the bottom of the previous column
+                nextColumn = column - 1 < 0 ? gridDimensions.columns - 1 : column - 1; // Move to the previous column or wrap to the last column
+            }
+    
+            // Focus the next cell
+            const nextCell = document.querySelector(`[data-row="${nextRow}"][data-column="${nextColumn}"]`);
+            if (nextCell) {
+                nextCell.focus();
+            }
+        };
+
+        const handleKeyDown = (e, row, column) => {
+            if (e.key === 'Tab') {
+                e.preventDefault(); // Prevent the default tab behavior
+                const direction = e.shiftKey ? 'up' : 'down'; // Use Shift+Tab to move up
+                handleCellFocus(row, column, direction);
+            }
+        }; 
+
         const handleCellEdit = (row, column, note) => {
             let newNotesData = [...notesData];
             const convertedNote = convertNotes(note); // Convert the note to symbols
@@ -177,6 +206,10 @@ const JeongganboEditor = () => {
                                     className="jeonggan"
                                     contentEditable
                                     onBlur={(e) => handleCellEdit(rowIndex, columnIndex, e.target.innerText)}
+                                    onKeyDown={(e) => handleKeyDown(e, rowIndex, columnIndex)}
+                                    data-row={rowIndex}
+                                    data-column={columnIndex}
+                                    tabIndex={0} // Make the div focusable
                                     dangerouslySetInnerHTML={{ __html: cell.split('').map(char => `<div class="jeonggan-note">${char}</div>`).join('') }}>
                                 </div>
                             ))}
@@ -185,11 +218,10 @@ const JeongganboEditor = () => {
                             )}
                         </React.Fragment>
                     ))}
-                    </div>
+                </div>
             </div>
         </div>
     );
-    
 };
 
 export default JeongganboEditor;
