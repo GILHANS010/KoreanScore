@@ -20,7 +20,6 @@ const koreanToChinese = {
     '무': '無',
     '응': '應',
     'ㅅ': '△',
-    '<': '〈',
     '-': '─',
 };
 
@@ -101,62 +100,13 @@ const JeongganboEditor = () => {
 
         const handleCellEdit = (row, column, note) => {
             let newNotesData = [...notesData];
-            // Convert note to symbols
-            const convertedNote = convertNotes(note); // Assume this returns a string of symbols
-        
-            // Format the note with line breaks as needed
-            const formattedNote = formatNoteForDisplay(convertedNote);
-        
-            if (formattedNote !== false) {
-                newNotesData[row][column] = formattedNote; // Store formatted symbols
-                setNotesData(newNotesData);
-            } else {
-                // Optionally, alert the user that the input was refused
-                alert("Maximum of 6 characteristics allowed per cell.");
-            }
+            // Convert newline characters to <br> tags to preserve user-entered formatting
+            const formattedNote = note.replace(/\n/g, '<br>');
+            const convertedNote = convertNotes(formattedNote); // Convert note to symbols if necessary
+            newNotesData[row][column] = convertedNote; // Store the formatted and converted symbols
+            setNotesData(newNotesData);
         };
-        
-        const formatNoteForDisplay = (note) => {
-            if (note.length > 6) return false; // Directly refuse input if more than 6 characters
-        
-            let formattedNote = note; // Default to the note itself
-        
-            switch (note.length) {
-                case 2:
-                case 3:
-                    // For 2 or 3 characters, insert line breaks between each character
-                    formattedNote = note.split('').join('<br>');
-                    break;
-                case 4:
-                    formattedNote = insertLineBreaks(note, [2]);
-                    break;
-                case 5:
-                    formattedNote = insertLineBreaks(note, [2, 3]);
-                    break;
-                case 6:
-                    formattedNote = insertLineBreaks(note, [2, 4]);
-                    break;
-                default:
-                    // Handle cases where note length is 0 or 1, or any other unexpected length <= 6
-                    // Since we've already checked for note.length > 6 above, this default case might not be necessary
-                    // but is included to satisfy ESLint's rule and provide a clear path for all possible inputs.
-                    break;
-            }
-        
-            return formattedNote;
-        };        
-        
-        const insertLineBreaks = (note, breakPoints) => {
-            let result = '';
-            let lastBreakPoint = 0;
-            breakPoints.forEach((point, index) => {
-                result += note.substring(lastBreakPoint, point) + (index < breakPoints.length ? '<br>' : '');
-                lastBreakPoint = point;
-            });
-            result += note.substring(lastBreakPoint); // Add the remaining part of the note
-            return result;
-        };
-        
+
         const convertNotes = (notes) => {
             // Splitting on each character that is not a modifier, keeping the modifiers with the character
             let splitNotes = notes.match(/([;/]*[\S])/g) || [];
@@ -197,7 +147,7 @@ const JeongganboEditor = () => {
             }));
         };
         
-
+        
         // Dynamically calculate the editor container width based on the number of columns
         const editorContainerStyle = {
             gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)`,
@@ -232,10 +182,6 @@ const JeongganboEditor = () => {
                 <div className="input-group">
                     <label htmlFor="barInput">강:</label>
                     <input id="barInput" type="number" defaultValue={beatsPerBar} onChange={(e) => setBeatsPerBar(parseInt(e.target.value, 10))} />
-                </div>
-                <div className="input-group">
-                    <label htmlFor="bpmInput">BPM:</label>
-                    <input id="bpmInput" type="number" defaultValue={60} />
                 </div>
                 <button onClick={() => updateGridDimensions(8, 12)}>Reset Grid</button>
                 <button onClick={() => console.log(JSON.stringify(transposeArray(notesData)))}>Save Jeongganbo</button>
