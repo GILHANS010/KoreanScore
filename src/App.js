@@ -6,22 +6,40 @@ import React, {
 import './App.css';
 import html2canvas from 'html2canvas';
 
-const koreanToChinese = {
-    '황': '黃',
-    '대': '大',
-    '태': '太',
-    '협': '夾',
-    '고': '姑',
-    '중': '仲',
-    '유': '蕤',
-    '임': '林',
-    '이': '夷',
-    '남': '南',
-    '무': '無',
-    '응': '應',
-    'ㅅ': '△',
-    '-': '─',
+// const koreanToChinese = {
+//     '황': '黃',
+//     '대': '大',
+//     '태': '太',
+//     '협': '夾',
+//     '고': '姑',
+//     '중': '仲',
+//     '유': '蕤',
+//     '임': '林',
+//     '이': '夷',
+//     '남': '南',
+//     '무': '無',
+//     '응': '應',
+//     'ㅅ': '△',
+//     '-': '─',
+// };
+
+const noteConversion = {
+    '황': { chinese: '黃', western: 'Eb' },
+    '대': { chinese: '大', western: 'E' },
+    '태': { chinese: '太', western: 'F' },
+    '협': { chinese: '夾', western: 'Gb' },
+    '고': { chinese: '姑', western: 'G' },
+    '중': { chinese: '仲', western: 'Ab' },
+    '유': { chinese: '蕤', western: 'A' },
+    '임': { chinese: '林', western: 'Bb' },
+    '이': { chinese: '夷', western: 'B' },
+    '남': { chinese: '南', western: 'C' },
+    '무': { chinese: '無', western: 'Db' },
+    '응': { chinese: '應', western: 'D' },
+    'ㅅ': { chinese: '△', western: 'rest' }, // Assuming no Western equivalent given
+    '-': { chinese: '─', western: 'tie' }, // Assuming no Western equivalent given
 };
+
 
 const octaveMapping = {
     '황': ['㣴', '僙', '黃', '潢', '㶂'],
@@ -39,7 +57,10 @@ const octaveMapping = {
 };
 
 const JeongganboEditor = () => {
-        const [gridDimensions, setGridDimensions] = useState({ columns: 8, rows: 12 });
+        const [gridDimensions, setGridDimensions] = useState({
+            columns: 8,
+            rows: 12
+        });
 
         const [notesData, setNotesData] = useState(Array.from({
             length: gridDimensions.rows
@@ -73,7 +94,7 @@ const JeongganboEditor = () => {
             // Calculate next focusable cell based on current row and column
             let nextRow = direction === 'down' ? row + 1 : row - 1;
             let nextColumn = column;
-    
+
             // If moving beyond the current column's rows, wrap to the next or previous column
             if (nextRow >= gridDimensions.rows) {
                 nextRow = 0; // Wrap to the top of the next column
@@ -82,7 +103,7 @@ const JeongganboEditor = () => {
                 nextRow = gridDimensions.rows - 1; // Wrap to the bottom of the previous column
                 nextColumn = column - 1 < 0 ? gridDimensions.columns - 1 : column - 1; // Move to the previous column or wrap to the last column
             }
-    
+
             // Focus the next cell
             const nextCell = document.querySelector(`[data-row="${nextRow}"][data-column="${nextColumn}"]`);
             if (nextCell) {
@@ -100,10 +121,10 @@ const JeongganboEditor = () => {
 
                 // Apply the converted note to the current cell's state.
                 const updatedNotesData = notesData.map((rowData, rowIndex) =>
-                    rowIndex === row
-                        ? rowData.map((cell, colIndex) =>
-                            colIndex === column ? convertedNote : cell)
-                        : rowData
+                    rowIndex === row ?
+                    rowData.map((cell, colIndex) =>
+                        colIndex === column ? convertedNote : cell) :
+                    rowData
                 );
 
                 // Set the updated notes data with the converted note.
@@ -136,7 +157,8 @@ const JeongganboEditor = () => {
         const convertToOctave = (note) => {
             // Extracting modifiers and the character
             let [modifiers, character] = note.split(/([;/]*)(.)/).slice(1, 3);
-            const baseNote = koreanToChinese[character] || character;
+            const baseNote = noteConversion[character] || character;
+            // const baseNote = noteConversion[character]?.western || character;
             const octaveIndex = getOctaveIndex(modifiers);
             const mappedCharacters = octaveMapping[character];
             return mappedCharacters && mappedCharacters[octaveIndex] ? mappedCharacters[octaveIndex] : baseNote;
@@ -166,8 +188,8 @@ const JeongganboEditor = () => {
             //     return row[colIndex].replace(/<br\s*\/?>/gi, '');
             // }));
         };
-        
-        
+
+
         // Dynamically calculate the editor container width based on the number of columns
         const editorContainerStyle = {
             gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)`,
