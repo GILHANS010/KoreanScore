@@ -90,13 +90,33 @@ const JeongganboEditor = () => {
             }
         };
 
-        const handleKeyDown = (e, row, column) => {
+        const handleKeyDown = async (e, row, column) => {
             if (e.key === 'Tab') {
-                e.preventDefault(); // Prevent the default tab behavior
-                const direction = e.shiftKey ? 'up' : 'down'; // Use Shift+Tab to move up
-                handleCellFocus(row, column, direction);
+                e.preventDefault(); // Prevent default tab behavior.
+
+                // Perform conversion immediately before moving focus.
+                const currentCell = notesData[row][column];
+                const convertedNote = convertNotes(currentCell); // Ensure this is synchronous.
+
+                // Apply the converted note to the current cell's state.
+                const updatedNotesData = notesData.map((rowData, rowIndex) =>
+                    rowIndex === row
+                        ? rowData.map((cell, colIndex) =>
+                            colIndex === column ? convertedNote : cell)
+                        : rowData
+                );
+
+                // Set the updated notes data with the converted note.
+                await setNotesData(updatedNotesData);
+
+                // Calculate and set the next focus cell after state update.
+                // setTimeout is used as a workaround for React's asynchronous state update.
+                setTimeout(() => {
+                    const direction = e.shiftKey ? 'up' : 'down';
+                    handleCellFocus(row, column, direction);
+                }, 0);
             }
-        }; 
+        };
 
         const handleCellEdit = (row, column, note) => {
             let newNotesData = [...notesData];
