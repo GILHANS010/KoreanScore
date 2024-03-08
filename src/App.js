@@ -6,23 +6,6 @@ import React, {
 import './App.css';
 import html2canvas from 'html2canvas';
 
-// const koreanToChinese = {
-//     '황': '黃',
-//     '대': '大',
-//     '태': '太',
-//     '협': '夾',
-//     '고': '姑',
-//     '중': '仲',
-//     '유': '蕤',
-//     '임': '林',
-//     '이': '夷',
-//     '남': '南',
-//     '무': '無',
-//     '응': '應',
-//     'ㅅ': '△',
-//     '-': '─',
-// };
-
 const noteConversion = {
     '황': { chinese: '黃', western: 'Eb' },
     '대': { chinese: '大', western: 'E' },
@@ -36,7 +19,7 @@ const noteConversion = {
     '남': { chinese: '南', western: 'C' },
     '무': { chinese: '無', western: 'Db' },
     '응': { chinese: '應', western: 'D' },
-    'ㅅ': { chinese: '△', western: 'rest' }, // Assuming no Western equivalent given
+    '^': { chinese: '△', western: 'rest' }, // Assuming no Western equivalent given
     '-': { chinese: '─', western: 'tie' }, // Assuming no Western equivalent given
 };
 
