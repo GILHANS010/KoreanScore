@@ -157,7 +157,7 @@ const JeongganboEditor = () => {
         const convertToOctave = (note) => {
             // Extracting modifiers and the character
             let [modifiers, character] = note.split(/([;/]*)(.)/).slice(1, 3);
-            const baseNote = noteConversion[character] || character;
+            const baseNote = noteConversion[character]?.chinese || character;
             // const baseNote = noteConversion[character]?.western || character;
             const octaveIndex = getOctaveIndex(modifiers);
             const mappedCharacters = octaveMapping[character];
