@@ -30,7 +30,7 @@ KoreanScore simplifies the creation of Jeongganbo notation for Korean traditiona
     
     **Bash**
     
-    `git clone https://github.com/<GILHANS010>/KoreanScore.git`
+    `git clone https://github.com/GILHANS010/KoreanScore.git`
     
 2. **Install Dependencies:**
     
