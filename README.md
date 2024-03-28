@@ -12,7 +12,7 @@ KoreanScore simplifies the creation of Jeongganbo notation for Korean traditiona
         - Use `/` for one octave down (adds "亻")
         - Use `//` for two octaves down (adds "亻亻")
     - **Rests and Ties:**
-        - Use `ㅅ` for rest
+        - Use `^` for rest
         - Use `` for tie
     - **Multiple Symbols per Cell:**
         - Combine characters within a single cell for complex notations.
