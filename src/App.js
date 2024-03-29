@@ -19,8 +19,8 @@ const noteConversion = {
     '남': { chinese: '南', western: 'C' },
     '무': { chinese: '無', western: 'Db' },
     '응': { chinese: '應', western: 'D' },
-    '^': { chinese: '△', western: 'rest' }, // Assuming no Western equivalent given
-    '-': { chinese: '─', western: 'tie' }, // Assuming no Western equivalent given
+    '^': { chinese: '△', western: 'rest' },
+    '-': { chinese: '─', western: 'tie' },
 };
 
 
@@ -48,8 +48,8 @@ const JeongganboEditor = () => {
         const [notesData, setNotesData] = useState(Array.from({
             length: gridDimensions.rows
         }, () => new Array(gridDimensions.columns).fill('')));
-        const [beatsPerBar, setBeatsPerBar] = useState(4); // Now allows dynamic updates
-        const [songTitle, setSongTitle] = useState("제목"); // State for the editable title
+        const [beatsPerBar, setBeatsPerBar] = useState(4);
+        const [songTitle, setSongTitle] = useState("제목");
 
         const columnsInputRef = useRef(null);
 
@@ -60,7 +60,7 @@ const JeongganboEditor = () => {
         }, []);
 
         const handleTitleChange = (e) => {
-            setSongTitle(e.target.innerText); // Update the title based on contentEditable div's text
+            setSongTitle(e.target.innerText);
         };
 
         const updateGridDimensions = (columns, rows) => {
@@ -96,7 +96,7 @@ const JeongganboEditor = () => {
 
         const handleKeyDown = async (e, row, column) => {
             if (e.key === 'Tab') {
-                e.preventDefault(); // Prevent default tab behavior.
+                e.preventDefault(); 
 
                 // Perform conversion immediately before moving focus.
                 const currentCell = notesData[row][column];
@@ -110,11 +110,9 @@ const JeongganboEditor = () => {
                     rowData
                 );
 
-                // Set the updated notes data with the converted note.
                 await setNotesData(updatedNotesData);
 
                 // Calculate and set the next focus cell after state update.
-                // setTimeout is used as a workaround for React's asynchronous state update.
                 setTimeout(() => {
                     const direction = e.shiftKey ? 'up' : 'down';
                     handleCellFocus(row, column, direction);
@@ -126,8 +124,8 @@ const JeongganboEditor = () => {
             let newNotesData = [...notesData];
             // Convert newline characters to <br> tags to preserve user-entered formatting
             const formattedNote = note.replace(/\n/g, '<br>');
-            const convertedNote = convertNotes(formattedNote); // Convert note to symbols if necessary
-            newNotesData[row][column] = convertedNote; // Store the formatted and converted symbols
+            const convertedNote = convertNotes(formattedNote);
+            newNotesData[row][column] = convertedNote;
             setNotesData(newNotesData);
         };
 
@@ -138,7 +136,6 @@ const JeongganboEditor = () => {
         };
 
         const convertToOctave = (note) => {
-            // Extracting modifiers and the character
             let [modifiers, character] = note.split(/([;/]*)(.)/).slice(1, 3);
             const baseNote = noteConversion[character]?.chinese || character;
             // const baseNote = noteConversion[character]?.western || character;

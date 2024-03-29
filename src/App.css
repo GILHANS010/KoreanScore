@@ -31,7 +31,7 @@ label {
   display: block;
   margin-bottom: 0.3125rem;
   font-weight: bold;
-  margin-right: 0.625rem; /* Spacing between label and input */
+  margin-right: 0.625rem;
 }
 
 .input-group {
@@ -54,9 +54,9 @@ input[type="number"], select, button {
 
 #editor-container {
   display: grid;
-  margin-top: 1.25rem; /* Adds some space between the menu bar and the editor container */
-  justify-content: start; /* Aligns content to the start which is now the right due to RTL */
-  direction: rtl; /* Keeps the direction right-to-left */
+  margin-top: 1.25rem;
+  justify-content: start; 
+  direction: rtl; 
   border: 0.0625rem solid #000;
   margin: 1.25rem auto;
 }
@@ -64,14 +64,14 @@ input[type="number"], select, button {
 .jeonggan {
   position: relative;
   border: 0.0625rem solid #000;
-  width: 5rem; /* Fixed width for cells */
-  height: 6.25rem; /* Fixed height for cells */
-  display: flex; /* Use flexbox for centering content */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  cursor: text; /* Change cursor to indicate editable */
+  width: 5rem; 
+  height: 6.25rem; 
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  cursor: text; 
   flex-direction: column;
-  text-align: center; /* Center text horizontally for consistency */
+  text-align: center; 
   font-size: 1.25rem;
   background-color: #fff;
   direction: ltr;
