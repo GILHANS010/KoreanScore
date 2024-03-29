@@ -24,6 +24,10 @@ KoreanScore simplifies the creation of Jeongganbo notation for Korean traditiona
     - **Convert to Korean:** Switch from the Chinese symbol view back to the original Korean characters.
     - **(Optional) Save Jeongganbo:** (Functionality to be implemented) Save your Jeongganbo score in a structured format for future use.
 
+**Demo**
+- https://gilhans010.github.io/KoreanScore/
+
+
 **Getting Started**
 
 1. **Clone the Repository:**
@@ -45,6 +49,7 @@ KoreanScore simplifies the creation of Jeongganbo notation for Korean traditiona
     
     `npm start`
     
+
 
 **How it Works**
 
