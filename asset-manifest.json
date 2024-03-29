@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/KoreanScore/static/css/main.77a36b2b.css",
+    "main.js": "/KoreanScore/static/js/main.7de6fbbb.js",
+    "static/js/453.e766e975.chunk.js": "/KoreanScore/static/js/453.e766e975.chunk.js",
+    "index.html": "/KoreanScore/index.html",
+    "main.77a36b2b.css.map": "/KoreanScore/static/css/main.77a36b2b.css.map",
+    "main.7de6fbbb.js.map": "/KoreanScore/static/js/main.7de6fbbb.js.map",
+    "453.e766e975.chunk.js.map": "/KoreanScore/static/js/453.e766e975.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.77a36b2b.css",
+    "static/js/main.7de6fbbb.js"
+  ]
+}
