@@ -1,8 +1,4 @@
-import React, {
-    useState,
-    useRef,
-    useEffect
-} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import html2canvas from 'html2canvas';
 
@@ -23,7 +19,6 @@ const noteConversion = {
     '-': { chinese: '─', western: 'tie' },
 };
 
-
 const octaveMapping = {
     '황': ['㣴', '僙', '黃', '潢', '㶂'],
     '대': ['㣕', '㐲', '大', '汏', '㳲'],
@@ -40,155 +35,184 @@ const octaveMapping = {
 };
 
 const JeongganboEditor = () => {
-        const [gridDimensions, setGridDimensions] = useState({
-            columns: 8,
-            rows: 12
+    const [gridDimensions, setGridDimensions] = useState({
+        columns: 8,
+        rows: 12
+    });
+
+    const [notesData, setNotesData] = useState(Array.from({
+        length: gridDimensions.rows
+    }, () => new Array(gridDimensions.columns).fill('')));
+    const [beatsPerBar, setBeatsPerBar] = useState(4);
+    const [songTitle, setSongTitle] = useState("제목");
+
+    const columnsInputRef = useRef(null);
+
+    useEffect(() => {
+        if (columnsInputRef.current) {
+            columnsInputRef.current.focus();
+        }
+    }, []);
+
+    const handleTitleChange = (e) => {
+        setSongTitle(e.target.innerText);
+    };
+
+    const updateGridDimensions = (columns, rows) => {
+        setGridDimensions({
+            columns,
+            rows
         });
+        setNotesData(Array.from({
+            length: rows
+        }, () => new Array(columns).fill('')));
+    };
 
-        const [notesData, setNotesData] = useState(Array.from({
-            length: gridDimensions.rows
-        }, () => new Array(gridDimensions.columns).fill('')));
-        const [beatsPerBar, setBeatsPerBar] = useState(4);
-        const [songTitle, setSongTitle] = useState("제목");
+    const handleCellFocus = (row, column, direction) => {
+        // Calculate next focusable cell based on current row and column
+        let nextRow = direction === 'down' ? row + 1 : row - 1;
+        let nextColumn = column;
 
-        const columnsInputRef = useRef(null);
+        // If moving beyond the current column's rows, wrap to the next or previous column
+        if (nextRow >= gridDimensions.rows) {
+            nextRow = 0; // Wrap to the top of the next column
+            nextColumn = column + 1 >= gridDimensions.columns ? 0 : column + 1; // Move to the next column or wrap to the first column
+        } else if (nextRow < 0) {
+            nextRow = gridDimensions.rows - 1; // Wrap to the bottom of the previous column
+            nextColumn = column - 1 < 0 ? gridDimensions.columns - 1 : column - 1; // Move to the previous column or wrap to the last column
+        }
 
-        useEffect(() => {
-            if (columnsInputRef.current) {
-                columnsInputRef.current.focus();
-            }
-        }, []);
+        // Focus the next cell
+        const nextCell = document.querySelector(`[data-row="${nextRow}"][data-column="${nextColumn}"]`);
+        if (nextCell) {
+            nextCell.focus();
+        }
+    };
 
-        const handleTitleChange = (e) => {
-            setSongTitle(e.target.innerText);
+    const handleKeyDown = async (e, row, column) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+
+            // Perform conversion immediately before moving focus.
+            const currentCell = notesData[row][column];
+            const convertedNote = convertNotes(currentCell); // Ensure this is synchronous.
+
+            // Apply the converted note to the current cell's state.
+            const updatedNotesData = notesData.map((rowData, rowIndex) =>
+                rowIndex === row ?
+                rowData.map((cell, colIndex) =>
+                    colIndex === column ? convertedNote : cell) :
+                rowData
+            );
+
+            await setNotesData(updatedNotesData);
+
+            // Calculate and set the next focus cell after state update.
+            setTimeout(() => {
+                const direction = e.shiftKey ? 'up' : 'down';
+                handleCellFocus(row, column, direction);
+            }, 0);
+        }
+    };
+
+    const handleCellEdit = (row, column, note) => {
+        let newNotesData = [...notesData];
+        // Convert newline characters to <br> tags to preserve user-entered formatting
+        const formattedNote = note.replace(/\n/g, '<br>');
+        const convertedNote = convertNotes(formattedNote);
+        newNotesData[row][column] = convertedNote;
+        setNotesData(newNotesData);
+    };
+
+    const convertNotes = (notes) => {
+        // Splitting on each character that is not a modifier, keeping the modifiers with the character
+        let splitNotes = notes.match(/([;/]*[\S])/g) || [];
+        return splitNotes.map(note => convertToOctave(note)).join('');
+    };
+
+    const convertToOctave = (note) => {
+        let [modifiers, character] = note.split(/([;/]*)(.)/).slice(1, 3);
+        const baseNote = noteConversion[character]?.chinese || character;
+        // const baseNote = noteConversion[character]?.western || character;
+        const octaveIndex = getOctaveIndex(modifiers);
+        const mappedCharacters = octaveMapping[character];
+        return mappedCharacters && mappedCharacters[octaveIndex] ? mappedCharacters[octaveIndex] : baseNote;
+    };
+
+    const getOctaveIndex = (modifiers) => {
+        switch (modifiers) {
+            case '':
+                return 2;
+            case ';':
+                return 3;
+            case ';;':
+                return 4;
+            case '/':
+                return 1;
+            case '//':
+                return 0;
+            default:
+                return 2;
+        }
+    };
+
+    const transposeArray = (array) => {
+        return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
+    };
+
+    const saveToFile = () => {
+        const transposedNotesData = transposeArray(notesData);
+        const data = {
+            gridDimensions,
+            notesData: transposedNotesData,
+            beatsPerBar,
+            songTitle,
         };
+        const json = JSON.stringify(data);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${songTitle.replace(/\s+/g, '_')}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
-        const updateGridDimensions = (columns, rows) => {
-            setGridDimensions({
-                columns,
-                rows
-            });
-            setNotesData(Array.from({
-                length: rows
-            }, () => new Array(columns).fill('')));
-        };
+    const loadFromFile = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = JSON.parse(e.target.result);
+                setGridDimensions(data.gridDimensions);
+                setNotesData(data.notesData);
+                setBeatsPerBar(data.beatsPerBar);
+                setSongTitle(data.songTitle);
+            };
+            reader.readAsText(file);
+        }
+    };
 
-        const handleCellFocus = (row, column, direction) => {
-            // Calculate next focusable cell based on current row and column
-            let nextRow = direction === 'down' ? row + 1 : row - 1;
-            let nextColumn = column;
+    // Dynamically calculate the editor container width based on the number of columns
+    const editorContainerStyle = {
+        gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)`,
+        width: `${gridDimensions.columns * 120}px`, // Adjusted for simplicity
+    };
 
-            // If moving beyond the current column's rows, wrap to the next or previous column
-            if (nextRow >= gridDimensions.rows) {
-                nextRow = 0; // Wrap to the top of the next column
-                nextColumn = column + 1 >= gridDimensions.columns ? 0 : column + 1; // Move to the next column or wrap to the first column
-            } else if (nextRow < 0) {
-                nextRow = gridDimensions.rows - 1; // Wrap to the bottom of the previous column
-                nextColumn = column - 1 < 0 ? gridDimensions.columns - 1 : column - 1; // Move to the previous column or wrap to the last column
-            }
+    const downloadAsImage = async () => {
+        const captureArea = document.getElementById('score-container');
+        const canvas = await html2canvas(captureArea);
+        const image = canvas.toDataURL('image/png');
 
-            // Focus the next cell
-            const nextCell = document.querySelector(`[data-row="${nextRow}"][data-column="${nextColumn}"]`);
-            if (nextCell) {
-                nextCell.focus();
-            }
-        };
-
-        const handleKeyDown = async (e, row, column) => {
-            if (e.key === 'Tab') {
-                e.preventDefault(); 
-
-                // Perform conversion immediately before moving focus.
-                const currentCell = notesData[row][column];
-                const convertedNote = convertNotes(currentCell); // Ensure this is synchronous.
-
-                // Apply the converted note to the current cell's state.
-                const updatedNotesData = notesData.map((rowData, rowIndex) =>
-                    rowIndex === row ?
-                    rowData.map((cell, colIndex) =>
-                        colIndex === column ? convertedNote : cell) :
-                    rowData
-                );
-
-                await setNotesData(updatedNotesData);
-
-                // Calculate and set the next focus cell after state update.
-                setTimeout(() => {
-                    const direction = e.shiftKey ? 'up' : 'down';
-                    handleCellFocus(row, column, direction);
-                }, 0);
-            }
-        };
-
-        const handleCellEdit = (row, column, note) => {
-            let newNotesData = [...notesData];
-            // Convert newline characters to <br> tags to preserve user-entered formatting
-            const formattedNote = note.replace(/\n/g, '<br>');
-            const convertedNote = convertNotes(formattedNote);
-            newNotesData[row][column] = convertedNote;
-            setNotesData(newNotesData);
-        };
-
-        const convertNotes = (notes) => {
-            // Splitting on each character that is not a modifier, keeping the modifiers with the character
-            let splitNotes = notes.match(/([;/]*[\S])/g) || [];
-            return splitNotes.map(note => convertToOctave(note)).join('');
-        };
-
-        const convertToOctave = (note) => {
-            let [modifiers, character] = note.split(/([;/]*)(.)/).slice(1, 3);
-            const baseNote = noteConversion[character]?.chinese || character;
-            // const baseNote = noteConversion[character]?.western || character;
-            const octaveIndex = getOctaveIndex(modifiers);
-            const mappedCharacters = octaveMapping[character];
-            return mappedCharacters && mappedCharacters[octaveIndex] ? mappedCharacters[octaveIndex] : baseNote;
-        };
-
-        const getOctaveIndex = (modifiers) => {
-            switch (modifiers) {
-                case '':
-                    return 2;
-                case ';':
-                    return 3;
-                case ';;':
-                    return 4;
-                case '/':
-                    return 1;
-                case '//':
-                    return 0;
-                default:
-                    return 2;
-            }
-        };
-
-        const transposeArray = (array) => {
-            // Assuming the input array is a 2D array of strings
-            return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
-            // return array[0].map((_, colIndex) => array.map(row => {
-            //     return row[colIndex].replace(/<br\s*\/?>/gi, '');
-            // }));
-        };
-
-
-        // Dynamically calculate the editor container width based on the number of columns
-        const editorContainerStyle = {
-            gridTemplateColumns: `repeat(${gridDimensions.columns}, 1fr)`,
-            width: `${gridDimensions.columns * 120}px`, // Adjusted for simplicity
-        };
-
-        const downloadAsImage = async () => {
-            const captureArea = document.getElementById('score-container');
-            const canvas = await html2canvas(captureArea);
-            const image = canvas.toDataURL('image/png');
-
-            // Create a link and set the URL as the link's href attribute
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = `${songTitle.replace(/\s+/g, '_')+'_madeWithK-Score'}.png`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        };
+        // Create a link and set the URL as the link's href attribute
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = `${songTitle.replace(/\s+/g, '_')+'_madeWithK-Score'}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     return (
         <div className='main-container'>
@@ -206,12 +230,12 @@ const JeongganboEditor = () => {
                     <input id="barInput" type="number" defaultValue={beatsPerBar} onChange={(e) => setBeatsPerBar(parseInt(e.target.value, 10))} />
                 </div>
                 <button onClick={() => updateGridDimensions(8, 12)}>Reset Grid</button>
-                <button onClick={() => console.log(JSON.stringify(transposeArray(notesData)))}>Save Jeongganbo</button>
+                <button onClick={saveToFile}>Save Jeongganbo</button>
+                <input type="file" accept="application/json" onChange={loadFromFile} />
                 <button onClick={downloadAsImage}>Download as PNG</button>
             </div>
 
             <div id="score-container">
-
                 <div
                     className="title"
                     contentEditable

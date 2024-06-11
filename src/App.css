@@ -94,3 +94,10 @@ button:hover {
   /* background-color: black; */
   width: 100%;
 }
+
+@media (max-width: 768px) {
+    #editor-container {
+        width: 100%;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+}
