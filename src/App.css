@@ -81,9 +81,38 @@ button {
   background-color: #007bff;
   color: white;
   cursor: pointer;
+  padding: 0.5rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
 }
 
 button:hover {
+  background-color: #0056b3;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.file-input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.file-input-label {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.file-input-label:hover {
   background-color: #0056b3;
 }
 
@@ -91,9 +120,9 @@ button:hover {
   grid-column: 1 / -1; /* Span across all columns */
   height: 0.125rem;
   border: 0.09375rem solid #000;
-  /* background-color: black; */
   width: 100%;
 }
+
 
 @media (max-width: 768px) {
     #editor-container {

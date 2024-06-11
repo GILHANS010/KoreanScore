@@ -160,6 +160,10 @@ const JeongganboEditor = () => {
         return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
     };
 
+    const revertTransposeArray = (array) => {
+        return array[0].map((_, rowIndex) => array.map(column => column[rowIndex]));
+    };
+
     const saveToFile = () => {
         const transposedNotesData = transposeArray(notesData);
         const data = {
@@ -185,8 +189,9 @@ const JeongganboEditor = () => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const data = JSON.parse(e.target.result);
+                const revertedNotesData = revertTransposeArray(data.notesData);
                 setGridDimensions(data.gridDimensions);
-                setNotesData(data.notesData);
+                setNotesData(revertedNotesData);
                 setBeatsPerBar(data.beatsPerBar);
                 setSongTitle(data.songTitle);
             };
@@ -231,7 +236,10 @@ const JeongganboEditor = () => {
                 </div>
                 <button onClick={() => updateGridDimensions(8, 12)}>Reset Grid</button>
                 <button onClick={saveToFile}>Save Jeongganbo</button>
-                <input type="file" accept="application/json" onChange={loadFromFile} />
+                <div className="file-input-wrapper">
+                    <label className="file-input-label" htmlFor="fileInput">Choose File</label>
+                    <input id="fileInput" type="file" accept="application/json" onChange={loadFromFile} />
+                </div>
                 <button onClick={downloadAsImage}>Download as PNG</button>
             </div>
 
