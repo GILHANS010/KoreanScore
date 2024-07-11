@@ -208,12 +208,26 @@ const JeongganboEditor = () => {
     const downloadAsImage = async () => {
         const captureArea = document.getElementById('score-container');
         const canvas = await html2canvas(captureArea);
-        const image = canvas.toDataURL('image/png');
+        const padding = 50; // Adjust the padding value as needed
 
-        // Create a link and set the URL as the link's href attribute
+        // Create a new canvas with the desired padding
+        const newCanvas = document.createElement('canvas');
+        newCanvas.width = canvas.width + padding * 2;
+        newCanvas.height = canvas.height + padding * 2;
+        const context = newCanvas.getContext('2d');
+
+        // Fill the new canvas with white color (optional)
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, newCanvas.width, newCanvas.height);
+
+        // Draw the captured canvas onto the new canvas with padding
+        context.drawImage(canvas, padding, padding);
+
+        // Export the new canvas as an image
+        const image = newCanvas.toDataURL('image/png');
         const link = document.createElement('a');
         link.href = image;
-        link.download = `${songTitle.replace(/\s+/g, '_')+'_madeWithK-Score'}.png`;
+        link.download = `${songTitle.replace(/\s+/g, '_') + '_madeWithK-Score'}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

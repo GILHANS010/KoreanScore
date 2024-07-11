@@ -54,7 +54,6 @@ input[type="number"], select, button {
 
 #editor-container {
   display: grid;
-  margin-top: 1.25rem;
   justify-content: start; 
   direction: rtl; 
   border: 0.15rem solid #000;
@@ -64,7 +63,7 @@ input[type="number"], select, button {
 .jeonggan {
   position: relative;
   border: 0.0625rem solid #000;
-  width: 5rem; 
+  width: 4.5rem; 
   height: 6.25rem; 
   display: flex; 
   justify-content: center;
