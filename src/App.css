@@ -57,7 +57,7 @@ input[type="number"], select, button {
   margin-top: 1.25rem;
   justify-content: start; 
   direction: rtl; 
-  border: 0.0625rem solid #000;
+  border: 0.15rem solid #000;
   margin: 1.25rem auto;
 }
 
@@ -78,7 +78,7 @@ input[type="number"], select, button {
 }
 
 button {
-  background-color: #007bff;
+  background-color: burlywood;
   color: white;
   cursor: pointer;
   padding: 0.5rem;
@@ -88,7 +88,11 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: darkgoldenrod;
+}
+
+.file-input-label:hover {
+  background-color: darkgoldenrod;
 }
 
 input[type="file"] {
@@ -102,7 +106,7 @@ input[type="file"] {
 
 .file-input-label {
   display: inline-block;
-  background-color: #007bff;
+  background-color: burlywood;
   color: white;
   cursor: pointer;
   padding: 0.5rem;
@@ -112,15 +116,12 @@ input[type="file"] {
   text-align: center;
 }
 
-.file-input-label:hover {
-  background-color: #0056b3;
-}
-
 .row-separator {
   grid-column: 1 / -1; /* Span across all columns */
-  height: 0.125rem;
-  border: 0.09375rem solid #000;
+  height: 0.5rem;
+  border: 0.1rem solid black; /* Change separator color to brown */
   width: 100%;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 
