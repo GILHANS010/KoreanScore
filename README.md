@@ -12,6 +12,9 @@ Jeongganbo Editor is an innovative web-based tool designed for musicians, musico
 - **Direct Editing**: Click on any cell to input and edit Jeongganbo notations directly.
 - **Tab Navigation**: Use the Tab key to seamlessly navigate between cells for efficient editing.
 
+### Demo Page
+- **Demo Web App Link**: https://gilhans010.github.io/KoreanScore/
+
 ### Note Conversion
 - **Korean to Chinese and Western Notations**: Automatically convert Korean notes to their corresponding Chinese characters or Western notations using a pre-defined conversion table.
 - **Octave Mapping**: Map notes to different octaves using specific modifiers.
