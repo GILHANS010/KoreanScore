@@ -34,6 +34,7 @@ let gridDimensions = { columns: 8, rows: 8 };
 let notesData = Array.from({ length: gridDimensions.rows }, () => new Array(gridDimensions.columns).fill(''));
 let beatsPerBar = 4;
 let songTitle = "제목";
+let fontSize = "20px";
 
 function initializeEditor() {
     updateGrid();
@@ -47,6 +48,8 @@ function initializeEditor() {
     document.getElementById('songTitle').addEventListener('blur', handleTitleChange);
     document.getElementById('showInstructionsBtn').addEventListener('click', showInstructions);
     document.getElementById('colorPalette').addEventListener('change', changeColorPalette);
+    document.getElementById('fontSizeSelector').addEventListener('change', changeFontSize);
+
 
     // Modal functionality
     const modal = document.getElementById('instructionModal');
@@ -82,6 +85,7 @@ function updateGrid() {
             jeonggan.dataset.row = rowIndex;
             jeonggan.dataset.column = columnIndex;
             jeonggan.tabIndex = 0;
+            jeonggan.style.fontSize = fontSize;
             jeonggan.innerHTML = notesData[rowIndex][columnIndex];
             jeonggan.addEventListener('blur', handleCellEdit);
             jeonggan.addEventListener('keydown', handleKeyDown);
@@ -93,6 +97,16 @@ function updateGrid() {
             editorContainer.appendChild(separator);
         }
     }
+}
+
+function changeFontStyle(event) {
+    fontStyle = event.target.value;
+    updateGrid();
+}
+
+function changeFontSize(event) {
+    fontSize = event.target.value;
+    updateGrid();
 }
 
 function handleRowsChange(e) {
@@ -287,7 +301,7 @@ async function downloadAsImage() {
     const image = newCanvas.toDataURL('image/png');
     const link = document.createElement('a');
     link.href = image;
-    link.download = `${songTitle.replace(/\s+/g, '_') + '_madeWithK-Score'}.png`;
+    link.download = `${songTitle.replace(/\s+/g, '_') + '_ByQlaudio'}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
