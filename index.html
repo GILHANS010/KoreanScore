@@ -11,7 +11,7 @@
         <div class="menu-bar">
             <div class="input-group">
                 <label for="rowsInput">정:</label>
-                <input id="rowsInput" type="number" value="12" min="1">
+                <input id="rowsInput" type="number" value="8" min="1">
             </div>
             <div class="input-group">
                 <label for="columnsInput">각:</label>
@@ -21,20 +21,104 @@
                 <label for="barInput">강:</label>
                 <input id="barInput" type="number" value="4">
             </div>
-            <button id="resetGridBtn">Reset Grid</button>
-            <button id="saveBtn">Save Jeongganbo</button>
-            <div class="file-input-wrapper">
-                <label class="file-input-label" for="fileInput">Choose File</label>
-                <input id="fileInput" type="file" accept="application/json">
+            <div class="input-group">
+                <label for="colorPalette">테마:</label>
+                <select id="colorPalette">
+                    <option value="default">기본</option>
+                    <option value="pastel">파스텔</option>
+                    <option value="dark">다크</option>
+                    <option value="vibrant">생동감</option>
+                    <option value="ocean">오션</option>
+                    <option value="forest">포레스트</option>
+                    <option value="sunset">선셋</option>
+                </select>
             </div>
-            <button id="downloadBtn">Download as PNG</button>
+            <button id="resetGridBtn">리셋</button>
+            <button id="saveBtn">저장하기</button>
+            <button id="loadFileBtn" onclick="document.getElementById('fileInput').click()">불러오기</button>
+            <input id="fileInput" type="file" accept="application/json" style="display: none;">
+            <button id="downloadBtn">이미지 저장</button>
+            <button id="showInstructionsBtn">사용법</button>
         </div>
 
         <div id="score-container">
             <div id="songTitle" class="title" contenteditable="true">제목</div>
-            <div id="editor-container"></div>
+            <div id="editor-container-wrapper">
+                <div id="editor-container"></div>
+            </div>
         </div>
     </div>
+
+    <!-- Instruction Modal -->
+    <div id="instructionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>정간보 에디터 사용법</h2>
+            <p><strong>노트 입력:</strong> 셀을 클릭하여 한글로 노트를 입력하고 Tab키를 누르면 자동으로 해당 중국어 기호로 손쉽게 변환됩니다.</p>
+            <p>옥타브 조절을 위해 ";" 및 "/"를 한글 앞에 붙여서 쉽게 변경할 수 있습니다. (예: ;황 = 潢   |   /황 = 僙)</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>한글</th>
+                        <th>중국어</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>황</td><td>黃</td>
+                    </tr>
+                    <tr>
+                        <td>대</td><td>大</td>
+                    </tr>
+                    <tr>
+                        <td>태</td><td>太</td>
+                    </tr>
+                    <tr>
+                        <td>협</td><td>夾</td>
+                    </tr>
+                    <tr>
+                        <td>고</td><td>姑</td>
+                    </tr>
+                    <tr>
+                        <td>중</td><td>仲</td>
+                    </tr>
+                    <tr>
+                        <td>유</td><td>蕤</td>
+                    </tr>
+                    <tr>
+                        <td>임</td><td>林</td>
+                    </tr>
+                    <tr>
+                        <td>이</td><td>夷</td>
+                    </tr>
+                    <tr>
+                        <td>남</td><td>南</td>
+                    </tr>
+                    <tr>
+                        <td>무</td><td>無</td>
+                    </tr>
+                    <tr>
+                        <td>응</td><td>應</td>
+                    </tr>
+                    <tr>
+                        <td>^</td><td>△</td>
+                    </tr>
+                    <tr>
+                        <td>-</td><td>─</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><strong>정 (Rows):</strong> 그리드의 행 수를 설정합니다.</p>
+            <p><strong>각 (Columns):</strong> 그리드의 열 수를 설정합니다.</p>
+            <p><strong>강 (Beats per Bar):</strong> 각 마디의 비트 수를 설정합니다.</p>
+            <p><strong>리셋:</strong> 그리드를 기본값으로 초기화합니다.</p>
+            <p><strong>정간보 파일 저장:</strong> 현재 정간보를 JSON 파일로 저장합니다.</p>
+            <p><strong>정간보 파일 불러오기:</strong> 저장된 JSON 파일을 불러옵니다.</p>
+            <p><strong>그림 파일로 내보내기:</strong> 현재 정간보를 PNG 이미지로 다운로드합니다.</p>
+            <p><strong>Tip! </strong>Tab키와 Shift+Tab키를 사용하여 셀 사이를 쉽게 이동할 수 있습니다.</p>
+        </div>
+    </div>
+
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="script.js"></script>
 </body>

@@ -30,7 +30,7 @@ const octaveMapping = {
     '응': ['㣹', '㒣', '應', '㶐', '㶝']
 };
 
-let gridDimensions = { columns: 8, rows: 12 };
+let gridDimensions = { columns: 8, rows: 8 };
 let notesData = Array.from({ length: gridDimensions.rows }, () => new Array(gridDimensions.columns).fill(''));
 let beatsPerBar = 4;
 let songTitle = "제목";
@@ -45,6 +45,27 @@ function initializeEditor() {
     document.getElementById('fileInput').addEventListener('change', loadFromFile);
     document.getElementById('downloadBtn').addEventListener('click', downloadAsImage);
     document.getElementById('songTitle').addEventListener('blur', handleTitleChange);
+    document.getElementById('showInstructionsBtn').addEventListener('click', showInstructions);
+    document.getElementById('colorPalette').addEventListener('change', changeColorPalette);
+
+    // Modal functionality
+    const modal = document.getElementById('instructionModal');
+    const span = document.getElementsByClassName('close')[0];
+
+    span.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+}
+
+function showInstructions() {
+    const modal = document.getElementById('instructionModal');
+    modal.style.display = 'block';
 }
 
 function updateGrid() {
@@ -92,9 +113,9 @@ function handleBarChange(e) {
 }
 
 function resetGrid() {
-    gridDimensions = { columns: 8, rows: 12 };
+    gridDimensions = { columns: 8, rows: 8 };
     notesData = Array.from({ length: gridDimensions.rows }, () => new Array(gridDimensions.columns).fill(''));
-    document.getElementById('rowsInput').value = 12;
+    document.getElementById('rowsInput').value = 8;
     document.getElementById('columnsInput').value = 8;
     document.getElementById('barInput').value = 4;
     beatsPerBar = 4;
@@ -271,5 +292,290 @@ async function downloadAsImage() {
     link.click();
     document.body.removeChild(link);
 }
+const colorPalettes = {
+    default: {
+        backgroundColor: '#ffffff',
+        borderColor: '#C5C6C7',
+        hoverBackgroundColor: '#e0e0e0',
+        hoverBorderColor: '#5a67d8',
+        textColor: '#333',
+        buttonBgColor: '#5a67d8',
+        buttonHoverBgColor: '#434190',
+        buttonTextColor: '#fff',
+    },
+    pastel: {
+        backgroundColor: '#faf3e0',
+        borderColor: '#f0c987',
+        hoverBackgroundColor: '#f0e5c9',
+        hoverBorderColor: '#e5a33f',
+        textColor: '#5d4037',
+        buttonBgColor: '#f0c987',
+        buttonHoverBgColor: '#e5a33f',
+        buttonTextColor: '#5d4037',
+    },
+    dark: {
+        backgroundColor: '#333',
+        borderColor: '#444',
+        hoverBackgroundColor: '#555',
+        hoverBorderColor: '#888',
+        textColor: '#eee',
+        buttonBgColor: '#444',
+        buttonHoverBgColor: '#888',
+        buttonTextColor: '#eee',
+    },
+    vibrant: {
+        backgroundColor: '#fffae3',
+        borderColor: '#ffcf44',
+        hoverBackgroundColor: '#ffdc73',
+        hoverBorderColor: '#ffb300',
+        textColor: '#b74e00',
+        buttonBgColor: '#ffcf44',
+        buttonHoverBgColor: '#ffb300',
+        buttonTextColor: '#b74e00',
+    },
+    ocean: {
+        backgroundColor: '#e0f7fa',
+        borderColor: '#00acc1',
+        hoverBackgroundColor: '#b2ebf2',
+        hoverBorderColor: '#00838f',
+        textColor: '#006064',
+        buttonBgColor: '#00acc1',
+        buttonHoverBgColor: '#00838f',
+        buttonTextColor: '#ffffff',
+    },
+    forest: {
+        backgroundColor: '#e8f5e9',
+        borderColor: '#66bb6a',
+        hoverBackgroundColor: '#c8e6c9',
+        hoverBorderColor: '#338a3e',
+        textColor: '#1b5e20',
+        buttonBgColor: '#66bb6a',
+        buttonHoverBgColor: '#338a3e',
+        buttonTextColor: '#ffffff',
+    },
+    sunset: {
+        backgroundColor: '#fff3e0',
+        borderColor: '#ff8a65',
+        hoverBackgroundColor: '#ffe0b2',
+        hoverBorderColor: '#d84315',
+        textColor: '#bf360c',
+        buttonBgColor: '#ff8a65',
+        buttonHoverBgColor: '#d84315',
+        buttonTextColor: '#ffffff',
+    },
+};
 
+function changeColorPalette(event) {
+    const selectedPalette = colorPalettes[event.target.value];
+    document.documentElement.style.setProperty('--bg-color', selectedPalette.backgroundColor);
+    document.documentElement.style.setProperty('--border-color', selectedPalette.borderColor);
+    document.documentElement.style.setProperty('--hover-bg-color', selectedPalette.hoverBackgroundColor);
+    document.documentElement.style.setProperty('--hover-border-color', selectedPalette.hoverBorderColor);
+    document.documentElement.style.setProperty('--text-color', selectedPalette.textColor);
+    document.documentElement.style.setProperty('--button-bg-color', selectedPalette.buttonBgColor);
+    document.documentElement.style.setProperty('--button-hover-bg-color', selectedPalette.buttonHoverBgColor);
+    document.documentElement.style.setProperty('--button-text-color', selectedPalette.buttonTextColor);
+    document.documentElement.style.setProperty('--input-text-color', selectedPalette.textColor);
+
+    updateGrid(); // Apply the new colors to the existing grid
+}
+
+// CSS Variables applied via JavaScript
+const css = `
+:root {
+    --bg-color: ${colorPalettes.default.backgroundColor};
+    --border-color: ${colorPalettes.default.borderColor};
+    --hover-bg-color: ${colorPalettes.default.hoverBackgroundColor};
+    --hover-border-color: ${colorPalettes.default.hoverBorderColor};
+    --text-color: ${colorPalettes.default.textColor};
+    --button-bg-color: ${colorPalettes.default.buttonBgColor};
+    --button-hover-bg-color: ${colorPalettes.default.buttonHoverBgColor};
+    --button-text-color: ${colorPalettes.default.buttonTextColor};
+    --input-text-color: var(--text-color);
+}
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+.menu-bar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 0;
+    background-color: var(--bg-color);
+    border-bottom: 2px solid var(--border-color);
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+#score-container {
+    position: relative;
+    margin: 40px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.title {
+    text-align: center;
+    font-size: 32px;
+    margin: 20px 0;
+    font-weight: bold;
+    color: var(--text-color);
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    margin-right: 10px;
+    color: var(--text-color);
+}
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+input[type="number"], select, button {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 60px; /* Unified width for input boxes */
+    color: var(--input-text-color);
+}
+input[type="number"] {
+    background-color: var(--bg-color);
+}
+select {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+button {
+    background-color: var(--button-bg-color);
+    color: var(--button-text-color);
+    cursor: pointer;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    width: 6rem;
+}
+button:hover {
+    background-color: var(--button-hover-bg-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.main-container {
+    background-color: var(--bg-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+#editor-container-wrapper {
+    position: relative;
+}
+#editor-container {
+    display: grid;
+    justify-content: start;
+    direction: rtl;
+    border: 2.4px solid var(--border-color);
+    margin: 20px auto;
+    padding: 0 40px 0 0;
+    grid-gap: 0; /* Remove gap between jeonggan cells */
+}
+.jeonggan {
+    position: relative;
+    border: 1px solid var(--border-color);
+    width: 72px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: text;
+    flex-direction: column;
+    text-align: center;
+    font-size: 20px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    direction: ltr;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    border-radius: 4px; /* Rounded corners */
+}
+.jeonggan:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: var(--hover-border-color);
+}
+input[type="file"] {
+    display: none;
+}
+.row-separator {
+    grid-column: 1 / -1;
+    height: 8px;
+    border: 1.8px solid var(--border-color); /* Lighten the separator color */
+    width: calc(100% + 40px); /* Added to fit width including padding */
+    transform: translateX(40px); /* Align to left edge of container */
+    box-sizing: border-box;
+}
+@media (max-width: 768px) {
+    #editor-container {
+        width: 100%;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+}
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+table, th, td {
+    border: 1px solid var(--border-color);
+}
+th, td {
+    padding: 8px;
+    text-align: center;
+    color: var(--text-color);
+}
+th {
+    background-color: var(--bg-color);
+}
+`;
+
+document.head.insertAdjacentHTML('beforeend', `<style>${css}</style>`);
 document.addEventListener('DOMContentLoaded', initializeEditor);
