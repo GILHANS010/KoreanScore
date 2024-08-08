@@ -64,16 +64,20 @@ input[type="number"], select, button {
 
 #editor-container-wrapper {
     position: relative;
+    overflow: hidden; /* Ensure the border-radius of the container is visible */
+    border-radius: 8px; /* Apply border-radius to the wrapper */
 }
 
 #editor-container {
     display: grid;
-    justify-content: start; 
-    direction: rtl; 
+    justify-content: start;
+    direction: rtl;
     border: 2.4px solid #000;
     margin: 20px auto;
     padding: 0 40px 0 0;
     grid-gap: 0; /* Remove gap between jeonggan cells */
+    border-radius: 8px; /* Ensure border-radius is set */
+    overflow: hidden; /* Prevent overflow to maintain border-radius */
 }
 
 .jeonggan {
@@ -124,7 +128,7 @@ input[type="file"] {
 .row-separator {
     grid-column: 1 / -1;
     height: 8px;
-    border: 1.8px solid g; /* Lighten the separator color */
+    border: 1.8px solid grey; /* Lighten the separator color */
     width: calc(100% + 40px); /* Added to fit width including padding */
     transform: translateX(40px); /* Align to left edge of container */
     box-sizing: border-box;
