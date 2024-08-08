@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정간보 에디터</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <div class="menu-bar">
+            <div class="input-group">
+                <label for="rowsInput">정:</label>
+                <input id="rowsInput" type="number" value="12" min="1">
+            </div>
+            <div class="input-group">
+                <label for="columnsInput">각:</label>
+                <input id="columnsInput" type="number" value="8" min="1">
+            </div>
+            <div class="input-group">
+                <label for="barInput">강:</label>
+                <input id="barInput" type="number" value="4">
+            </div>
+            <button id="resetGridBtn">Reset Grid</button>
+            <button id="saveBtn">Save Jeongganbo</button>
+            <div class="file-input-wrapper">
+                <label class="file-input-label" for="fileInput">Choose File</label>
+                <input id="fileInput" type="file" accept="application/json">
+            </div>
+            <button id="downloadBtn">Download as PNG</button>
+        </div>
+
+        <div id="score-container">
+            <div id="songTitle" class="title" contenteditable="true">제목</div>
+            <div id="editor-container"></div>
+        </div>
+    </div>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
