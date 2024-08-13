@@ -301,7 +301,7 @@ async function downloadAsImage() {
     const image = newCanvas.toDataURL('image/png');
     const link = document.createElement('a');
     link.href = image;
-    link.download = `${songTitle.replace(/\s+/g, '_') + '_ByQlaudio'}.png`;
+    link.download = `${songTitle.replace(/\s+/g, '_') + '_MadeWithQlaudio'}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
