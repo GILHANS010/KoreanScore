@@ -36,6 +36,28 @@ let beatsPerBar = 4;
 let songTitle = "제목";
 let fontSize = "20px";
 
+document.getElementById('donateBtn').addEventListener('click', function() {
+    const modal = document.getElementById('donationModal');
+    modal.style.display = 'block';
+});
+
+document.querySelectorAll('.close').forEach(function(span) {
+    span.onclick = function() {
+        const modal = this.closest('.modal');
+        modal.style.display = 'none';
+    }
+});
+
+window.onclick = function(event) {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(function(modal) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+
 function initializeEditor() {
     updateGrid();
     document.getElementById('rowsInput').addEventListener('change', handleRowsChange);
@@ -588,6 +610,82 @@ th, td {
 }
 th {
     background-color: var(--bg-color);
+}
+
+/* 후원 모달 스타일 */
+#donationModal {
+    display: none; /* 초기에는 보이지 않도록 설정 */
+    position: fixed; /* 화면에 고정 */
+    z-index: 1000; /* 다른 요소들보다 앞에 위치 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* 스크롤 가능 */
+    background-color: rgba(0,0,0,0.6); /* 배경을 반투명한 검은색으로 설정 */
+    backdrop-filter: blur(5px); /* 배경을 흐리게 */
+}
+
+#donationModal .modal-content {
+    background-color: #fff;
+    margin: 10% auto; /* 화면 중앙에 위치 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px; /* 최대 너비 설정 */
+    border-radius: 10px; /* 둥근 모서리 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 부드러운 그림자 */
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    position: relative; /* 닫기 버튼을 위한 상대 위치 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+#donationModal .modal-content h2 {
+    margin-top: 0;
+    color: #ff5722; /* 강조 색상으로 제목 스타일링 */
+}
+
+#donationModal .modal-content p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-size: 16px;
+    color: #555;
+}
+
+#donationModal .modal-content ul {
+    list-style-type: none; /* 기본 불릿 제거 */
+    padding: 0;
+}
+
+#donationModal .modal-content ul li {
+    font-size: 16px;
+    color: #333;
+    padding: 8px 0;
+}
+
+#donationModal .modal-content ul li::before {
+    content: "✔"; /* 체크 마크 아이콘 추가 */
+    margin-right: 10px;
+    color: #ff5722;
+}
+
+#donationModal .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+#donationModal .close:hover,
+#donationModal .close:focus {
+    color: #ff5722; /* 강조 색상으로 변경 */
+    text-decoration: none;
+    cursor: pointer;
 }
 `;
 
