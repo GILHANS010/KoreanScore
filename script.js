@@ -311,13 +311,13 @@ async function downloadAsImage() {
     const captureArea = document.getElementById('score-container');
     
     // Set the scale to 2 or 3 for higher resolution images
-    const scale = 3;
+    const scale = 4;
     const canvas = await html2canvas(captureArea, {
         scale: scale,
         useCORS: true, // Allows for cross-origin images to be captured
         logging: false, // Disable logging to console
-        width: captureArea.scrollWidth,
-        height: captureArea.scrollHeight,
+        width: captureArea.scrollWidth + 10,
+        height: captureArea.scrollHeight + 10,
     });
 
     // Create a new canvas with padding
