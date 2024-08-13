@@ -34,7 +34,7 @@ let gridDimensions = { columns: 8, rows: 8 };
 let notesData = Array.from({ length: gridDimensions.rows }, () => new Array(gridDimensions.columns).fill(''));
 let beatsPerBar = 4;
 let songTitle = "제목";
-let fontSize = "20px";
+let fontSize = "22px";
 
 document.getElementById('donateBtn').addEventListener('click', function() {
     const modal = document.getElementById('donationModal');
@@ -310,25 +310,27 @@ function revertTransposeArray(array) {
 async function downloadAsImage() {
     const captureArea = document.getElementById('score-container');
     
-    // Set the scale to 2 or 3 for higher resolution images
+    // Set the scale to 4 for higher resolution images
     const scale = 4;
+    const padding = 50 * scale;  // Define padding
+
+    // Capture the exact content size without additional width/height
     const canvas = await html2canvas(captureArea, {
         scale: scale,
-        useCORS: true, // Allows for cross-origin images to be captured
-        logging: false, // Disable logging to console
-        width: captureArea.scrollWidth + 10,
-        height: captureArea.scrollHeight + 10,
+        useCORS: true,
+        logging: false,
+        backgroundColor: null, // Capture with transparent background
     });
 
-    // Create a new canvas with padding
-    const padding = 50 * scale;
+    // Create a new canvas larger than the captured area by the padding amount
     const newCanvas = document.createElement('canvas');
     newCanvas.width = canvas.width + padding * 2;
     newCanvas.height = canvas.height + padding * 2;
     const context = newCanvas.getContext('2d');
 
-    // Fill the background with white (or any other color)
-    context.fillStyle = '#fff';
+    // Set the background color of the new canvas
+    const bodyBgColor = getComputedStyle(document.body).backgroundColor;
+    context.fillStyle = bodyBgColor;
     context.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
     // Draw the original canvas onto the new canvas with padding
@@ -348,78 +350,82 @@ async function downloadAsImage() {
     document.body.removeChild(link);
 }
 
+
+
+
 const colorPalettes = {
     default: {
         backgroundColor: '#ffffff',
-        borderColor: '#C5C6C7',
-        hoverBackgroundColor: '#e0e0e0',
-        hoverBorderColor: '#5a67d8',
-        textColor: '#333',
-        buttonBgColor: '#5a67d8',
-        buttonHoverBgColor: '#434190',
-        buttonTextColor: '#fff',
+        borderColor: '#999999', // Darker grey for better contrast
+        hoverBackgroundColor: '#f2f2f2', // Slightly darker for clear hover effect
+        hoverBorderColor: '#4a90e2', // Brighter blue for hover border
+        textColor: '#333333', // Dark grey for readability
+        buttonBgColor: '#4a90e2', // Brighter blue for buttons
+        buttonHoverBgColor: '#357abd', // Darker blue for button hover
+        buttonTextColor: '#ffffff', // White text for buttons
     },
     pastel: {
-        backgroundColor: '#faf3e0',
-        borderColor: '#f0c987',
-        hoverBackgroundColor: '#f0e5c9',
-        hoverBorderColor: '#e5a33f',
-        textColor: '#5d4037',
-        buttonBgColor: '#f0c987',
-        buttonHoverBgColor: '#e5a33f',
-        buttonTextColor: '#5d4037',
+        backgroundColor: '#fff5e6', // Slightly warmer pastel tone
+        borderColor: '#f2c07b', // Richer pastel orange
+        hoverBackgroundColor: '#f9e0b2', // Warmer pastel yellow
+        hoverBorderColor: '#e89c41', // More defining orange for hover
+        textColor: '#704214', // Deep brown for better contrast
+        buttonBgColor: '#f2c07b', // Rich pastel orange
+        buttonHoverBgColor: '#e89c41', // Stronger orange for button hover
+        buttonTextColor: '#704214', // Deep brown text for buttons
     },
     dark: {
-        backgroundColor: '#333',
-        borderColor: '#444',
-        hoverBackgroundColor: '#555',
-        hoverBorderColor: '#888',
-        textColor: '#eee',
-        buttonBgColor: '#444',
-        buttonHoverBgColor: '#888',
-        buttonTextColor: '#eee',
+        backgroundColor: '#2b2b2b', // Deep grey for background
+        borderColor: '#555555', // Slightly lighter grey for borders
+        hoverBackgroundColor: '#444444', // Clearer hover state
+        hoverBorderColor: '#999999', // Light grey for hover border
+        textColor: '#ffffff', // White for high contrast text
+        buttonBgColor: '#555555', // Medium grey for buttons
+        buttonHoverBgColor: '#777777', // Lighter grey for button hover
+        buttonTextColor: '#ffffff', // White text on buttons
     },
     vibrant: {
-        backgroundColor: '#fffae3',
-        borderColor: '#ffcf44',
-        hoverBackgroundColor: '#ffdc73',
-        hoverBorderColor: '#ffb300',
-        textColor: '#b74e00',
-        buttonBgColor: '#ffcf44',
-        buttonHoverBgColor: '#ffb300',
-        buttonTextColor: '#b74e00',
+        backgroundColor: '#fff9c4', // Brighter yellow
+        borderColor: '#ffc107', // Bold yellow for borders
+        hoverBackgroundColor: '#fff59d', // Softer yellow hover
+        hoverBorderColor: '#ff8f00', // Deep orange for hover border
+        textColor: '#ff6f00', // Bright orange text
+        buttonBgColor: '#ffc107', // Bold yellow for buttons
+        buttonHoverBgColor: '#ff8f00', // Deep orange for button hover
+        buttonTextColor: '#ffffff', // White text on buttons
     },
     ocean: {
-        backgroundColor: '#e0f7fa',
-        borderColor: '#00acc1',
-        hoverBackgroundColor: '#b2ebf2',
-        hoverBorderColor: '#00838f',
-        textColor: '#006064',
-        buttonBgColor: '#00acc1',
-        buttonHoverBgColor: '#00838f',
-        buttonTextColor: '#ffffff',
+        backgroundColor: '#e0f7fa', // Light cyan
+        borderColor: '#00bcd4', // Brighter cyan for borders
+        hoverBackgroundColor: '#b2ebf2', // Softer cyan for hover
+        hoverBorderColor: '#0097a7', // Deep cyan for hover border
+        textColor: '#00796b', // Strong teal for text
+        buttonBgColor: '#00bcd4', // Bright cyan for buttons
+        buttonHoverBgColor: '#0097a7', // Deep cyan for button hover
+        buttonTextColor: '#ffffff', // White text on buttons
     },
     forest: {
-        backgroundColor: '#e8f5e9',
-        borderColor: '#66bb6a',
-        hoverBackgroundColor: '#c8e6c9',
-        hoverBorderColor: '#338a3e',
-        textColor: '#1b5e20',
-        buttonBgColor: '#66bb6a',
-        buttonHoverBgColor: '#338a3e',
-        buttonTextColor: '#ffffff',
+        backgroundColor: '#e8f5e9', // Soft green
+        borderColor: '#4caf50', // Bold green for borders
+        hoverBackgroundColor: '#c8e6c9', // Light green hover
+        hoverBorderColor: '#388e3c', // Deep green for hover border
+        textColor: '#2e7d32', // Strong green for text
+        buttonBgColor: '#4caf50', // Bold green for buttons
+        buttonHoverBgColor: '#388e3c', // Deep green for button hover
+        buttonTextColor: '#ffffff', // White text on buttons
     },
     sunset: {
-        backgroundColor: '#fff3e0',
-        borderColor: '#ff8a65',
-        hoverBackgroundColor: '#ffe0b2',
-        hoverBorderColor: '#d84315',
-        textColor: '#bf360c',
-        buttonBgColor: '#ff8a65',
-        buttonHoverBgColor: '#d84315',
-        buttonTextColor: '#ffffff',
+        backgroundColor: '#ffe0b2', // Warmer orange for background
+        borderColor: '#ff7043', // Bright orange for borders
+        hoverBackgroundColor: '#ffcc80', // Soft orange for hover
+        hoverBorderColor: '#d84315', // Deep orange for hover border
+        textColor: '#bf360c', // Strong red-orange for text
+        buttonBgColor: '#ff7043', // Bright orange for buttons
+        buttonHoverBgColor: '#d84315', // Deep orange for button hover
+        buttonTextColor: '#ffffff', // White text on buttons
     },
 };
+
 
 function changeColorPalette(event) {
     const selectedPalette = colorPalettes[event.target.value];
@@ -433,8 +439,12 @@ function changeColorPalette(event) {
     document.documentElement.style.setProperty('--button-text-color', selectedPalette.buttonTextColor);
     document.documentElement.style.setProperty('--input-text-color', selectedPalette.textColor);
 
+    // Apply background color to the entire webpage
+    document.body.style.backgroundColor = selectedPalette.backgroundColor;
+
     updateGrid(); // Apply the new colors to the existing grid
 }
+
 
 // CSS Variables applied via JavaScript
 const css = `
@@ -451,7 +461,7 @@ const css = `
 }
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f0f0f0;
+    background-color: var(--bg-color); /* This will use the theme's background color */
     margin: 0;
     padding: 20px;
 }
