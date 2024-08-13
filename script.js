@@ -71,7 +71,9 @@ function initializeEditor() {
     document.getElementById('showInstructionsBtn').addEventListener('click', showInstructions);
     document.getElementById('colorPalette').addEventListener('change', changeColorPalette);
     document.getElementById('fontSizeSelector').addEventListener('change', changeFontSize);
-
+    // Hide the loading screen and show the main content
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.querySelector('.main-container').style.display = 'block';
 
     // Modal functionality
     const modal = document.getElementById('instructionModal');
@@ -307,27 +309,45 @@ function revertTransposeArray(array) {
 
 async function downloadAsImage() {
     const captureArea = document.getElementById('score-container');
-    const canvas = await html2canvas(captureArea);
-    const padding = 50;
+    
+    // Set the scale to 2 or 3 for higher resolution images
+    const scale = 3;
+    const canvas = await html2canvas(captureArea, {
+        scale: scale,
+        useCORS: true, // Allows for cross-origin images to be captured
+        logging: false, // Disable logging to console
+        width: captureArea.scrollWidth,
+        height: captureArea.scrollHeight,
+    });
 
+    // Create a new canvas with padding
+    const padding = 50 * scale;
     const newCanvas = document.createElement('canvas');
     newCanvas.width = canvas.width + padding * 2;
     newCanvas.height = canvas.height + padding * 2;
     const context = newCanvas.getContext('2d');
 
+    // Fill the background with white (or any other color)
     context.fillStyle = '#fff';
     context.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
+    // Draw the original canvas onto the new canvas with padding
     context.drawImage(canvas, padding, padding);
 
+    // Convert the new canvas to a data URL (image)
     const image = newCanvas.toDataURL('image/png');
+
+    // Create a link to download the image
     const link = document.createElement('a');
     link.href = image;
-    link.download = `${songTitle.replace(/\s+/g, '_') + '_MadeWithQlaudio'}.png`;
+    link.download = `${songTitle.replace(/\s+/g, '_')}_MadeWithQlaudio.png`;
+
+    // Append the link, click it, and remove it to trigger the download
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 }
+
 const colorPalettes = {
     default: {
         backgroundColor: '#ffffff',
