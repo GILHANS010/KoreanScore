@@ -547,6 +547,7 @@ button:hover {
     justify-content: start;
     direction: rtl;
     border: 2.4px solid var(--border-color);
+    border-radius: 8px;
     margin: 20px auto;
     padding: 0 40px 0 0;
     grid-gap: 0; /* Remove gap between jeonggan cells */
