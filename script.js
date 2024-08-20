@@ -134,16 +134,36 @@ function changeFontSize(event) {
 }
 
 function handleRowsChange(e) {
-    gridDimensions.rows = parseInt(e.target.value, 10);
-    notesData = Array.from({ length: gridDimensions.rows }, () => new Array(gridDimensions.columns).fill(''));
+    const newRowCount = parseInt(e.target.value, 10);
+    if (newRowCount > gridDimensions.rows) {
+        // Add new rows if the row count is increased
+        for (let i = gridDimensions.rows; i < newRowCount; i++) {
+            notesData.push(new Array(gridDimensions.columns).fill(''));
+        }
+    } else if (newRowCount < gridDimensions.rows) {
+        // Remove extra rows if the row count is decreased
+        notesData = notesData.slice(0, newRowCount);
+    }
+    gridDimensions.rows = newRowCount;
     updateGrid();
 }
 
 function handleColumnsChange(e) {
-    gridDimensions.columns = parseInt(e.target.value, 10);
-    notesData = notesData.map(() => new Array(gridDimensions.columns).fill(''));
+    const newColumnCount = parseInt(e.target.value, 10);
+    notesData = notesData.map(row => {
+        if (newColumnCount > gridDimensions.columns) {
+            // Add new columns if the column count is increased
+            return row.concat(new Array(newColumnCount - gridDimensions.columns).fill(''));
+        } else if (newColumnCount < gridDimensions.columns) {
+            // Remove extra columns if the column count is decreased
+            return row.slice(0, newColumnCount);
+        }
+        return row;
+    });
+    gridDimensions.columns = newColumnCount;
     updateGrid();
 }
+
 
 function handleBarChange(e) {
     beatsPerBar = parseInt(e.target.value, 10);
