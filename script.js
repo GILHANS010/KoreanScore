@@ -332,7 +332,7 @@ async function downloadAsImage() {
     
     // Set the scale to 4 for higher resolution images
     const scale = 4;
-    const padding = 50 * scale;  // Define padding
+    const padding = 1 * scale; 
 
     // Capture the exact content size without additional width/height
     const canvas = await html2canvas(captureArea, {
@@ -376,7 +376,7 @@ async function downloadAsImage() {
 const colorPalettes = {
     default: {
         backgroundColor: '#ffffff',
-        borderColor: '#999999', // Darker grey for better contrast
+        borderColor: '#2e2e2e', // Very dark grey, close to black
         hoverBackgroundColor: '#f2f2f2', // Slightly darker for clear hover effect
         hoverBorderColor: '#4a90e2', // Brighter blue for hover border
         textColor: '#333333', // Dark grey for readability
@@ -511,6 +511,15 @@ body {
     font-weight: bold;
     color: var(--text-color);
 }
+
+.songwriter {
+    text-align: right;
+    font-size: 20px;
+    margin-top: -10px; /* Adjust to fine-tune spacing */
+    margin-right: 10px;
+    color: var(--text-color); /* Same color as other text */
+}
+
 label {
     display: block;
     margin-bottom: 5px;
