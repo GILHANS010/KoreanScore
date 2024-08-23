@@ -513,7 +513,7 @@ body {
 }
 
 .songwriter {
-    text-align: right;
+    text-align: center;
     font-size: 20px;
     margin-top: -10px; /* Adjust to fine-tune spacing */
     margin-right: 10px;
