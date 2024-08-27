@@ -376,10 +376,10 @@ async function downloadAsImage() {
 const colorPalettes = {
     default: {
         backgroundColor: '#ffffff',
-        borderColor: '#2e2e2e', // Very dark grey, close to black
+        borderColor: '#000000', // Very dark grey, close to black
         hoverBackgroundColor: '#f2f2f2', // Slightly darker for clear hover effect
         hoverBorderColor: '#4a90e2', // Brighter blue for hover border
-        textColor: '#333333', // Dark grey for readability
+        textColor: '#000000', // Dark grey for readability
         buttonBgColor: '#4a90e2', // Brighter blue for buttons
         buttonHoverBgColor: '#357abd', // Darker blue for button hover
         buttonTextColor: '#ffffff', // White text for buttons
@@ -747,6 +747,58 @@ th {
     text-decoration: none;
     cursor: pointer;
 }
+/* Western Notation Modal Styles */
+#westernModal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6); /* Black with opacity */
+    backdrop-filter: blur(5px); /* Background blur effect */
+}
+
+#westernModal .modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 700px; /* Adjust max width as needed */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    text-align: center;
+}
+
+#westernModal .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+#westernModal .close:hover,
+#westernModal .close:focus {
+    color: #ff5722; /* Highlight color */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#westernNotationContainer {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
 `;
 
 document.head.insertAdjacentHTML('beforeend', `<style>${css}</style>`);
