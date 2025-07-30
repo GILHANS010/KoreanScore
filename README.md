@@ -13,7 +13,7 @@ Jeongganbo Editor is an innovative web-based tool designed for musicians, musico
 - **Tab Navigation**: Use the Tab key to seamlessly navigate between cells for efficient editing.
 
 ### Demo Page
-- **Demo Web App Link**: https://jeaongganbo.com/
+- **Demo Web App Link**: https://jeongganbo.com/
 
 ### Note Conversion
 - **Korean to Chinese and Western Notations**: Automatically convert Korean notes to their corresponding Chinese characters or Western notations using a pre-defined conversion table.
